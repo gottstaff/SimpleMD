@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/qt/qml/org/kde/simplemd/">
+    <file alias="Main.qml">/home/gus/projects/simple_editor/src/Main.qml</file>
+    <file alias="SplitEditor.qml">/home/gus/projects/simple_editor/src/SplitEditor.qml</file>
+    <file alias="DocumentOutlinePanel.qml">/home/gus/projects/simple_editor/src/DocumentOutlinePanel.qml</file>
+    <file alias="MarkdownEditor.qml">/home/gus/projects/simple_editor/src/MarkdownEditor.qml</file>
+    <file alias="StyledScrollBar.qml">/home/gus/projects/simple_editor/src/StyledScrollBar.qml</file>
+    <file alias="documentoutline.js">/home/gus/projects/simple_editor/src/documentoutline.js</file>
+    <file alias="editorhelpers.js">/home/gus/projects/simple_editor/src/editorhelpers.js</file>
+    <file alias="editorfonts.js">/home/gus/projects/simple_editor/src/editorfonts.js</file>
+  </qresource>
+</RCC>
+

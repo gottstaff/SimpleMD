@@ -1,0 +1,31 @@
+<RCC>
+  <qresource prefix="/preview">
+    <file alias="preview.html">/home/gus/projects/simple_editor/resources/preview/preview.html</file>
+    <file alias="vendor/marked.min.js">/home/gus/projects/simple_editor/resources/preview/vendor/marked.min.js</file>
+    <file alias="vendor/katex.min.js">/home/gus/projects/simple_editor/resources/preview/vendor/katex.min.js</file>
+    <file alias="vendor/katex.min.css">/home/gus/projects/simple_editor/resources/preview/vendor/katex.min.css</file>
+    <file alias="vendor/contrib/mhchem.min.js">/home/gus/projects/simple_editor/resources/preview/vendor/contrib/mhchem.min.js</file>
+    <file alias="vendor/mermaid.min.js">/home/gus/projects/simple_editor/resources/preview/vendor/mermaid.min.js</file>
+    <file alias="vendor/fonts/KaTeX_AMS-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_AMS-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Caligraphic-Bold.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Caligraphic-Bold.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Caligraphic-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Caligraphic-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Fraktur-Bold.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Fraktur-Bold.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Fraktur-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Fraktur-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Main-Bold.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Main-Bold.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Main-BoldItalic.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Main-BoldItalic.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Main-Italic.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Main-Italic.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Main-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Main-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Math-BoldItalic.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Math-BoldItalic.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Math-Italic.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Math-Italic.woff2</file>
+    <file alias="vendor/fonts/KaTeX_SansSerif-Bold.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_SansSerif-Bold.woff2</file>
+    <file alias="vendor/fonts/KaTeX_SansSerif-Italic.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_SansSerif-Italic.woff2</file>
+    <file alias="vendor/fonts/KaTeX_SansSerif-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_SansSerif-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Script-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Script-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Size1-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Size1-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Size2-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Size2-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Size3-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Size3-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Size4-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Size4-Regular.woff2</file>
+    <file alias="vendor/fonts/KaTeX_Typewriter-Regular.woff2">/home/gus/projects/simple_editor/resources/preview/vendor/fonts/KaTeX_Typewriter-Regular.woff2</file>
+  </qresource>
+</RCC>
+

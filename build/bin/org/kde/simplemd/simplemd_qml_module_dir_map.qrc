@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="/">
+    <file alias="/qt/qml/org/kde/simplemd">/home/gus/projects/simple_editor/build/bin/org/kde/simplemd</file>
+
+  </qresource>
+</RCC>

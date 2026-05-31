@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Name=SimpleMD
+Comment=Minimal markdown editor with live preview
+Exec=simplemd
+Icon=org.kde.simplemd
+Type=Application
+Terminal=false
+Categories=Utility;TextEditor;
+StartupWMClass=org.kde.simplemd

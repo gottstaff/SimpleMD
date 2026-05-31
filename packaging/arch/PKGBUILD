@@ -1,0 +1,38 @@
+# Maintainer: SimpleMD contributors
+pkgname=simplemd
+pkgver=1.0.0
+pkgrel=12
+pkgdesc="Minimal markdown editor with live preview"
+arch=('x86_64')
+url="https://github.com/kde/simplemd"
+license=('GPL-3.0-or-later')
+depends=(
+  'qt6-base'
+  'qt6-declarative'
+  'qt6-webengine'
+  'kirigami'
+  'ki18n'
+  'kcoreaddons'
+  'qqc2-desktop-style'
+  'kiconthemes'
+)
+makedepends=(
+  'cmake'
+  'extra-cmake-modules'
+  'qt6-tools'
+)
+source=()
+sha256sums=()
+
+build() {
+  local project_root="${startdir}/../.."
+  cmake -B "${srcdir}/build" -S "${project_root}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -Wno-dev
+  cmake --build "${srcdir}/build" --parallel "$(nproc)"
+}
+
+package() {
+  DESTDIR="${pkgdir}" cmake --install "${srcdir}/build"
+}

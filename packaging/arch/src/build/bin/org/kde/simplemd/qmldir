@@ -1,0 +1,10 @@
+module org.kde.simplemd
+typeinfo simplemd.qmltypes
+prefer :/qt/qml/org/kde/simplemd/
+Main 254.0 Main.qml
+SplitEditor 254.0 SplitEditor.qml
+DocumentOutlinePanel 254.0 DocumentOutlinePanel.qml
+MarkdownEditor 254.0 MarkdownEditor.qml
+StyledScrollBar 254.0 StyledScrollBar.qml
+depends QtQuick
+

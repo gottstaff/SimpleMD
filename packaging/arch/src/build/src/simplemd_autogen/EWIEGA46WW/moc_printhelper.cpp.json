@@ -1,0 +1,52 @@
+{
+    "classes": [
+        {
+            "className": "PrintHelper",
+            "lineNumber": 10,
+            "methods": [
+                {
+                    "access": "public",
+                    "arguments": [
+                        {
+                            "name": "webEngineView",
+                            "type": "QObject*"
+                        }
+                    ],
+                    "index": 1,
+                    "lineNumber": 17,
+                    "name": "printPreview",
+                    "returnType": "void"
+                }
+            ],
+            "object": true,
+            "qualifiedClassName": "PrintHelper",
+            "slots": [
+                {
+                    "access": "private",
+                    "arguments": [
+                        {
+                            "name": "filePath",
+                            "type": "QString"
+                        },
+                        {
+                            "name": "ok",
+                            "type": "bool"
+                        }
+                    ],
+                    "index": 0,
+                    "lineNumber": 20,
+                    "name": "onPdfPrintingFinished",
+                    "returnType": "void"
+                }
+            ],
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QObject"
+                }
+            ]
+        }
+    ],
+    "inputFile": "printhelper.h",
+    "outputRevision": 69
+}

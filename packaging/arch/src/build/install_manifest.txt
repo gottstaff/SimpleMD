@@ -1,0 +1,11 @@
+/usr/bin/simplemd
+/usr/share/applications/org.kde.simplemd.desktop
+/usr/share/icons/hicolor/16x16/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/22x22/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/24x24/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/32x32/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/48x48/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/64x64/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/128x128/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/256x256/apps/org.kde.simplemd.png
+/usr/share/icons/hicolor/scalable/apps/org.kde.simplemd.svg

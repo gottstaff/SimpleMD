@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="qrc:/preview/vendor/katex.min.css">
+  <style>
+    :root {
+      --text: #1a1a1a;
+      --bg: #fafafa;
+      --link: #2980b9;
+      --code-bg: rgba(0, 0, 0, 0.06);
+      --font-family: system-ui, sans-serif;
+      --font-size: 15px;
+      --line-height: 1.55;
+      --pad: 28px;
+      --max-width: 46em;
+      --scrollbar-size: 3px;
+      --scrollbar-thumb: rgba(26, 26, 26, 0.36);
+      --scrollbar-thumb-hover: rgba(26, 26, 26, 0.58);
+      --scrollbar-thumb-active: rgba(26, 26, 26, 0.72);
+      --scrollbar-track: transparent;
+    }
+    html, body {
+      scrollbar-width: thin;
+      scrollbar-color: var(--scrollbar-thumb) transparent;
+    }
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      width: var(--scrollbar-size) !important;
+      height: var(--scrollbar-size) !important;
+      background: transparent !important;
+    }
+    html::-webkit-scrollbar-track,
+    body::-webkit-scrollbar-track {
+      background: transparent !important;
+    }
+    html::-webkit-scrollbar-thumb,
+    body::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb) !important;
+      border: none !important;
+      border-radius: 999px !important;
+      min-height: 48px;
+    }
+    html::-webkit-scrollbar-thumb:hover,
+    body::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover) !important;
+    }
+    html::-webkit-scrollbar-thumb:active,
+    body::-webkit-scrollbar-thumb:active {
+      background: var(--scrollbar-thumb-active) !important;
+    }
+    html::-webkit-scrollbar-button,
+    body::-webkit-scrollbar-button {
+      width: 0 !important;
+      height: 0 !important;
+      display: none !important;
+    }
+    html::-webkit-scrollbar-corner,
+    body::-webkit-scrollbar-corner {
+      background: transparent !important;
+    }
+    html {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-family);
+      font-size: var(--font-size);
+      line-height: var(--line-height);
+    }
+    #content {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: var(--pad);
+      box-sizing: border-box;
+    }
+    #content .md-block {
+      margin: 0;
+    }
+    #content .md-block[data-active="true"] {
+      outline: 1px solid rgba(41, 128, 185, 0.22);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    #content p { margin: 0.75em 0; }
+    #content pre {
+      background: var(--code-bg);
+      padding: 0.9em 1em;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    #content code { font-family: ui-monospace, monospace; font-size: 0.92em; }
+    #content a { color: var(--link); }
+    #content blockquote {
+      margin: 0.75em 0;
+      padding-left: 1em;
+      border-left: 3px solid rgba(0, 0, 0, 0.12);
+      opacity: 0.9;
+    }
+    #content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0.75em auto;
+    }
+    #content figure {
+      margin: 1.25em 0;
+      text-align: center;
+    }
+    #content figure img {
+      margin: 0 auto 0.5em;
+    }
+    #content figcaption {
+      font-size: 0.92em;
+      opacity: 0.85;
+      font-style: italic;
+    }
+    #content .mermaid {
+      margin: 1.25em 0;
+      text-align: center;
+      overflow-x: auto;
+      background: transparent;
+      border: none;
+      padding: 0;
+    }
+    #content pre.mermaid-error {
+      background: var(--code-bg);
+      padding: 0.9em 1em;
+      border-radius: 6px;
+      color: #a94442;
+      font-family: ui-monospace, monospace;
+      font-size: 0.92em;
+      white-space: pre-wrap;
+    }
+    #content table {
+      border-collapse: collapse;
+      margin: 1em 0;
+      width: 100%;
+    }
+    #content th, #content td {
+      border: 1px solid rgba(0, 0, 0, 0.15);
+      padding: 0.4em 0.65em;
+    }
+    #content .footnotes {
+      margin-top: 2em;
+      padding-top: 0.75em;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      font-size: 0.92em;
+    }
+    #content .footnotes ol {
+      margin: 0.5em 0 0;
+      padding-left: 1.5em;
+    }
+    #content .footnotes li {
+      margin: 0.35em 0;
+    }
+    #content .footnote-ref a {
+      text-decoration: none;
+      padding: 0 0.15em;
+    }
+    #content .footnote-backref {
+      text-decoration: none;
+      margin-left: 0.35em;
+      opacity: 0.75;
+    }
+    .katex-display { margin: 1em 0; overflow-x: auto; overflow-y: hidden; }
+
+    @media print {
+      html, body {
+        background: #fff !important;
+        color: #111 !important;
+        font-size: 11pt;
+        line-height: 1.45;
+      }
+      #content {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+      }
+      #content .md-block[data-active="true"] {
+        outline: none !important;
+      }
+      #content a {
+        color: #111;
+        text-decoration: underline;
+      }
+      #content pre {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+      #content .katex-display {
+        overflow: visible;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+      #content .md-block {
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+      #content h1, #content h2, #content h3 {
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+      #content img {
+        max-width: 100%;
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+      #content figure {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+      #content table {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+      #content .mermaid {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="content"></div>
+  <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+  <script src="qrc:/preview/vendor/marked.min.js"></script>
+  <script src="qrc:/preview/vendor/katex.min.js"></script>
+  <script src="qrc:/preview/vendor/contrib/mhchem.min.js"></script>
+  <script src="qrc:/preview/vendor/mermaid.min.js"></script>
+  <script>
+    marked.setOptions({ breaks: true, gfm: true });
+
+    let documentBaseUrl = '';
+    let mermaidInitPromise = null;
+    const mathSegments = [];
+    const fencedCodeSegments = [];
+
+    function resetMathSegments() {
+      mathSegments.length = 0;
+    }
+
+    function protectFencedCode(text) {
+      fencedCodeSegments.length = 0;
+      return text.replace(/```[^\n]*\n[\s\S]*?```/g, (block) => {
+        const id = fencedCodeSegments.length;
+        fencedCodeSegments.push(block);
+        return 'FENCEDCODEPH_' + id + '_END';
+      });
+    }
+
+    function restoreFencedCode(text) {
+      return text.replace(/FENCEDCODEPH_(\d+)_END/g, (_, id) => {
+        return fencedCodeSegments[parseInt(id, 10)] || '';
+      });
+    }
+
+    function protectMhchem(text) {
+      let result = '';
+      let i = 0;
+      while (i < text.length) {
+        const match = text.slice(i).match(/^\\(ce|pu)\{/);
+        if (match) {
+          const cmd = match[1];
+          const bodyStart = i + match[0].length;
+          let depth = 1;
+          let j = bodyStart;
+          while (j < text.length && depth > 0) {
+            const ch = text[j];
+            if (ch === '{') {
+              depth++;
+            } else if (ch === '}') {
+              depth--;
+            }
+            j++;
+          }
+          if (depth === 0) {
+            const body = text.slice(bodyStart, j - 1);
+            result += stashMath('\\' + cmd + '{' + body + '}', false);
+            i = j;
+            continue;
+          }
+        }
+        result += text[i];
+        i++;
+      }
+      return result;
+    }
+
+    function mathPlaceholder(id) {
+      return 'XMATHPH' + id + 'XEND';
+    }
+
+    function stashMath(tex, display) {
+      const id = mathSegments.length;
+      mathSegments.push({ tex: tex.trim(), display: display });
+      return mathPlaceholder(id);
+    }
+
+    function protectMath(markdown, resetSegments) {
+      if (resetSegments !== false) {
+        resetMathSegments();
+      }
+      let text = protectFencedCode(markdown || '');
+
+      text = text.replace(/\$\$([\s\S]*?)\$\$/g, (_, tex) => {
+        return '\n\n' + stashMath(tex, true) + '\n\n';
+      });
+
+      text = text.replace(/\\\[([\s\S]*?)\\\]/g, (_, tex) => {
+        return '\n\n' + stashMath(tex, true) + '\n\n';
+      });
+
+      text = text.replace(/\\\(([\s\S]*?)\\\)/g, (_, tex) => {
+        return stashMath(tex, false);
+      });
+
+      text = text.replace(/(^|[^$\\])\$([^$\n]+?)\$(?!\$)/g, (m, prefix, tex) => {
+        return prefix + stashMath(tex, false);
+      });
+
+      text = protectMhchem(text);
+
+      return restoreFencedCode(text);
+    }
+
+    function renderLatex(tex, display) {
+      try {
+        return katex.renderToString(tex, {
+          displayMode: display,
+          throwOnError: false,
+          strict: false,
+          trust: true,
+          output: 'html'
+        });
+      } catch (e) {
+        return '<span class="katex-error" title="' + String(e.message).replace(/"/g, '&quot;') + '">' +
+               tex.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</span>';
+      }
+    }
+
+    function injectMath(el) {
+      let html = el.innerHTML;
+      mathSegments.forEach((seg, id) => {
+        const ph = mathPlaceholder(id);
+        const rendered = renderLatex(seg.tex, seg.display);
+        html = html.split(ph).join(rendered);
+      });
+      el.innerHTML = html;
+    }
+
+    function resolveAssetUrl(src) {
+      if (!src) {
+        return src;
+      }
+      const trimmed = src.trim();
+      if (/^(https?:|data:|file:|qrc:|#|mailto:)/i.test(trimmed)) {
+        return trimmed;
+      }
+      if (/^\/[^/]/.test(trimmed)) {
+        return 'file://' + encodeURI(trimmed);
+      }
+      if (/^[A-Za-z]:[\\/]/.test(trimmed)) {
+        return 'file:///' + encodeURI(trimmed.replace(/\\/g, '/'));
+      }
+      if (!documentBaseUrl) {
+        return trimmed;
+      }
+      try {
+        return new URL(trimmed.replace(/^\.\//, ''), documentBaseUrl).href;
+      } catch (e) {
+        return trimmed;
+      }
+    }
+
+    function decodeHtmlEntities(html) {
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = html;
+      return textarea.value;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function normalizeMermaidHtml(html) {
+      return html.replace(
+        /<pre><code class="[^"]*\blanguage-mermaid\b[^"]*">([\s\S]*?)<\/code><\/pre>/gi,
+        (_, body) => '<pre class="mermaid">' + escapeHtml(decodeHtmlEntities(body)) + '</pre>\n'
+      );
+    }
+
+    function mermaidLabelNeedsQuotes(label) {
+      return /[()#%;]/.test(label) || /\[|\]/.test(label);
+    }
+
+    function escapeMermaidLabel(label) {
+      return label.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    }
+
+    function quoteFlowchartLabelsOnLine(line) {
+      let result = line.replace(/([A-Za-z0-9_]+)\[([^\]"]+)\]/g, (match, id, label) => {
+        if (!mermaidLabelNeedsQuotes(label)) {
+          return match;
+        }
+        return id + '["' + escapeMermaidLabel(label) + '"]';
+      });
+
+      result = result.replace(/([A-Za-z0-9_]+)\{([^}"]+)\}/g, (match, id, label) => {
+        if (!mermaidLabelNeedsQuotes(label)) {
+          return match;
+        }
+        return id + '{"' + escapeMermaidLabel(label) + '"}';
+      });
+
+      result = result.replace(/(-->|---)\|([^|"]+)\|/g, (match, arrow, label) => {
+        if (!mermaidLabelNeedsQuotes(label)) {
+          return match;
+        }
+        return arrow + '|"' + escapeMermaidLabel(label) + '"|';
+      });
+
+      return result;
+    }
+
+    function sanitizeMermaidSource(source) {
+      let text = source
+        .replace(/\uFEFF/g, '')
+        .replace(/\r\n/g, '\n')
+        .replace(/\r/g, '\n')
+        .trim();
+
+      if (text.length === 0) {
+        return text;
+      }
+
+      const lines = text.split('\n');
+      const header = lines[0].replace(/\s+$/u, '');
+      const isFlowchart = /^\s*(?:flowchart|graph)\b/i.test(header);
+
+      lines[0] = header
+        .replace(/^(\s*)graph(\s+)(TB|BT|LR|RL|TD|DT)\b/i, '$1flowchart$2$3')
+        .replace(/^(\s*)graph\s*$/i, '$1flowchart TD');
+
+      for (let i = 1; i < lines.length; i++) {
+        let line = lines[i].replace(/\s+$/u, '');
+        if (isFlowchart) {
+          line = line.replace(/[\u2010-\u2015\u2212]/g, '-');
+          line = quoteFlowchartLabelsOnLine(line);
+        }
+        lines[i] = line;
+      }
+
+      return lines.join('\n');
+    }
+
+    function prepareMermaidSource(node) {
+      const source = sanitizeMermaidSource(node.textContent);
+      node.textContent = source;
+      return source.length > 0;
+    }
+
+    function fixLocalAssets(el) {
+      el.querySelectorAll('img[src]').forEach(img => {
+        img.src = resolveAssetUrl(img.getAttribute('src'));
+      });
+      el.querySelectorAll('a[href]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && !/^https?:/i.test(href) && !href.startsWith('#')) {
+          link.href = resolveAssetUrl(href);
+        }
+      });
+    }
+
+    async function ensureMermaidReady() {
+      if (typeof mermaid === 'undefined') {
+        return false;
+      }
+      if (!mermaidInitPromise) {
+        mermaidInitPromise = mermaid.initialize({
+          startOnLoad: false,
+          theme: 'neutral',
+          securityLevel: 'loose'
+        });
+      }
+      await mermaidInitPromise;
+      return true;
+    }
+
+    function collectMermaidNodes(el) {
+      // Legacy marked output: <pre><code class="language-mermaid">
+      el.querySelectorAll('pre > code.language-mermaid').forEach(code => {
+        const pre = code.parentElement;
+        if (!pre) {
+          return;
+        }
+        const mermaidPre = document.createElement('pre');
+        mermaidPre.className = 'mermaid';
+        mermaidPre.textContent = code.textContent;
+        pre.replaceWith(mermaidPre);
+      });
+
+      return Array.from(el.querySelectorAll('pre.mermaid')).filter(
+        node => !node.hasAttribute('data-processed')
+      );
+    }
+
+    async function renderMermaid(el) {
+      const nodes = collectMermaidNodes(el).filter(prepareMermaidSource);
+      if (nodes.length === 0) {
+        return;
+      }
+
+      if (!(await ensureMermaidReady())) {
+        return;
+      }
+
+      try {
+        await mermaid.run({ nodes: nodes, suppressErrors: true });
+      } catch (e) {
+        console.warn('Mermaid render failed:', e);
+        nodes.forEach(node => {
+          if (node.querySelector('svg')) {
+            return;
+          }
+          const err = document.createElement('pre');
+          err.className = 'mermaid-error';
+          err.textContent = node.textContent;
+          node.replaceWith(err);
+        });
+      }
+    }
+
+    function applyTheme(theme) {
+      if (!theme) return;
+      const root = document.documentElement;
+      if (theme.text) root.style.setProperty('--text', theme.text);
+      if (theme.bg) root.style.setProperty('--bg', theme.bg);
+      if (theme.link) root.style.setProperty('--link', theme.link);
+      if (theme.fontFamily) root.style.setProperty('--font-family', theme.fontFamily);
+      if (theme.fontSize) root.style.setProperty('--font-size', theme.fontSize + 'px');
+      if (theme.lineHeight) root.style.setProperty('--line-height', theme.lineHeight);
+      if (theme.pad) root.style.setProperty('--pad', theme.pad + 'px');
+      if (theme.maxWidth) root.style.setProperty('--max-width', theme.maxWidth + 'em');
+      if (theme.scrollbarThumb) root.style.setProperty('--scrollbar-thumb', theme.scrollbarThumb);
+      if (theme.scrollbarTrack) root.style.setProperty('--scrollbar-track', theme.scrollbarTrack);
+      if (theme.scrollbarSize) root.style.setProperty('--scrollbar-size', theme.scrollbarSize + 'px');
+      if (theme.scrollbarThumbHover) {
+        root.style.setProperty('--scrollbar-thumb-hover', theme.scrollbarThumbHover);
+      } else if (theme.scrollbarThumb) {
+        root.style.setProperty('--scrollbar-thumb-hover', theme.scrollbarThumb);
+      }
+      if (theme.scrollbarThumbActive) {
+        root.style.setProperty('--scrollbar-thumb-active', theme.scrollbarThumbActive);
+      } else if (theme.scrollbarThumbHover) {
+        root.style.setProperty('--scrollbar-thumb-active', theme.scrollbarThumbHover);
+      }
+    }
+
+    function base64ToUtf8(base64Text) {
+      const binary = atob(base64Text);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    function updatePreviewFromBase64(base64Text) {
+      const jsonText = base64ToUtf8(base64Text);
+      const payload = JSON.parse(jsonText);
+      updatePreview(payload.markdown, payload.theme, payload.documentBaseUrl || '');
+    }
+
+    async function updatePreview(markdown, theme, baseUrl) {
+      applyTheme(theme);
+      documentBaseUrl = baseUrl || '';
+      const el = document.getElementById('content');
+      el.innerHTML = renderBlocksHtml(markdown);
+      injectMath(el);
+      fixLocalAssets(el);
+      await renderMermaid(el);
+
+      const ensureLine = window._pendingEnsureLine || 0;
+      const anchorLine = window._pendingAnchorLine || ensureLine;
+      if (ensureLine > 0 || anchorLine > 0) {
+        scrollPreviewForEditor(anchorLine, ensureLine);
+      }
+
+      if (window.scrollBridge && typeof window.scrollBridge.previewUpdated === 'function') {
+        window.scrollBridge.previewUpdated();
+      }
+      if (window._pendingOutput && window.scrollBridge
+          && typeof window.scrollBridge.outputReady === 'function') {
+        const mode = window._pendingOutput;
+        window._pendingOutput = '';
+        window.scrollBridge.outputReady(mode);
+      } else if (window._pendingPrint && window.scrollBridge
+          && typeof window.scrollBridge.printReady === 'function') {
+        window._pendingPrint = false;
+        window.scrollBridge.outputReady('print');
+      }
+    }
+
+    function clearExportLayout() {
+      const existing = document.getElementById('export-layout');
+      if (existing) {
+        existing.remove();
+      }
+      const exportTitle = document.getElementById('export-title');
+      if (exportTitle) {
+        exportTitle.remove();
+      }
+      document.documentElement.style.removeProperty('--bg');
+      document.documentElement.style.removeProperty('--text');
+      document.body.style.removeProperty('background');
+    }
+
+    function exportMarginMm(preset) {
+      switch (preset) {
+        case 'narrow':
+          return { top: 22, right: 16, bottom: 22, left: 16 };
+        case 'wide':
+          return { top: 38, right: 28, bottom: 38, left: 28 };
+        default:
+          return { top: 30, right: 22, bottom: 30, left: 22 };
+      }
+    }
+
+    function exportTypography(preset) {
+      switch (preset) {
+        case 'compact':
+          return {
+            fontSize: '10pt',
+            lineHeight: '1.35',
+            maxWidth: 'none',
+            headingScale: '0.95',
+          };
+        case 'manuscript':
+          return {
+            fontSize: '12pt',
+            lineHeight: '2',
+            maxWidth: '34em',
+            headingScale: '1',
+          };
+        default:
+          return {
+            fontSize: '11pt',
+            lineHeight: '1.5',
+            maxWidth: 'none',
+            headingScale: '1',
+          };
+      }
+    }
+
+    function prepareForExport(options) {
+      prepareForPrint();
+      clearExportLayout();
+
+      const opts = options || {};
+      const margins = exportMarginMm(opts.margins || 'normal');
+      const typo = exportTypography(opts.layout || 'document');
+      const pageNumbers = opts.pageNumbers === true;
+      const title = (opts.title || '').replace(/\s*\[\*\]\s*$/, '').trim();
+      const layout = opts.layout || 'document';
+
+      document.documentElement.style.setProperty('--bg', '#ffffff');
+      document.documentElement.style.setProperty('--text', '#1a1a1a');
+      document.body.style.background = '#ffffff';
+
+      const content = document.getElementById('content');
+      if (title.length > 0 && layout === 'document') {
+        const header = document.createElement('div');
+        header.id = 'export-title';
+        header.textContent = title;
+        content.insertBefore(header, content.firstChild);
+      }
+
+      const bottomMargin = margins.bottom + (pageNumbers ? 8 : 0);
+
+      let pageFooterCss = '';
+      if (pageNumbers) {
+        pageFooterCss = `
+      @bottom-center {
+        content: counter(page);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 9pt;
+        color: #666;
+      }`;
+      }
+
+      const style = document.createElement('style');
+      style.id = 'export-layout';
+      style.textContent = `
+    @page {
+      margin: ${margins.top}mm ${margins.right}mm ${bottomMargin}mm ${margins.left}mm;
+      size: auto;
+      background: #fff;
+      ${pageFooterCss}
+    }
+    @media print {
+      html, body {
+        background: #fff !important;
+        color: #1a1a1a !important;
+        font-size: ${typo.fontSize} !important;
+        line-height: ${typo.lineHeight} !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      #content {
+        background: #fff !important;
+        max-width: ${typo.maxWidth} !important;
+        margin-left: ${typo.maxWidth !== 'none' ? 'auto' : '0'} !important;
+        margin-right: ${typo.maxWidth !== 'none' ? 'auto' : '0'} !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+      }
+      #export-title {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 8.5pt;
+        color: #888;
+        margin: 0 0 1.25em 0;
+        padding: 0 0 0.5em 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+      #content .md-block {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+      #content pre {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+      #content h1, #content h2, #content h3 {
+        break-after: avoid-page;
+        page-break-after: avoid;
+      }
+      #content figure, #content table, #content .katex-display, #content .mermaid {
+        break-inside: avoid-page;
+        page-break-inside: avoid;
+      }
+      #content h1 {
+        font-size: calc(1.65em * ${typo.headingScale});
+        margin-top: 0.4em;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        padding-bottom: 0.25em;
+      }
+      #content h2 {
+        font-size: calc(1.35em * ${typo.headingScale});
+        margin-top: 1.1em;
+      }
+      #content h3 {
+        font-size: calc(1.15em * ${typo.headingScale});
+      }
+      #content p {
+        orphans: 3;
+        widows: 3;
+      }
+      #content blockquote {
+        border-left: 3px solid rgba(0, 0, 0, 0.18);
+        padding-left: 1em;
+        color: #333;
+      }
+    }`;
+      document.head.appendChild(style);
+    }
+
+    function prepareForPrint() {
+      window.scrollTo(0, 0);
+      document.querySelectorAll('.md-block[data-active="true"]').forEach((node) => {
+        node.removeAttribute('data-active');
+      });
+    }
+
+    function forceRepaint() {
+      const body = document.body;
+      if (!body) {
+        return;
+      }
+      body.style.opacity = '0.999';
+      requestAnimationFrame(() => {
+        body.style.opacity = '1';
+      });
+    }
+
+    function splitMarkdownBlocks(markdown) {
+      const blocks = [];
+      const lines = (markdown || '').split('\n');
+      let inFence = false;
+      let current = [];
+      let startLine = 1;
+      let lineNum = 1;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        if (/^(```|~~~)/.test(trimmed)) {
+          inFence = !inFence;
+        }
+        if (trimmed === '' && !inFence) {
+          if (current.length > 0) {
+            blocks.push({ startLine: startLine, text: current.join('\n') });
+            current = [];
+            startLine = lineNum + 1;
+          }
+        } else {
+          if (current.length === 0) {
+            startLine = lineNum;
+          }
+          current.push(line);
+        }
+        lineNum++;
+      }
+
+      if (current.length > 0) {
+        blocks.push({ startLine: startLine, text: current.join('\n') });
+      }
+      if (blocks.length === 0) {
+        blocks.push({ startLine: 1, text: '' });
+      }
+      return blocks;
+    }
+
+    function footnoteSlug(id) {
+      return String(id).replace(/[^a-zA-Z0-9_-]+/g, '-');
+    }
+
+    function preprocessFootnotes(markdown) {
+      const definitions = new Map();
+      const lines = (markdown || '').split('\n');
+      const bodyLines = [];
+      const refPlaceholders = [];
+      const footnoteOrder = [];
+      const refCounts = new Map();
+      let inFence = false;
+      let i = 0;
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+        if (/^(```|~~~)/.test(trimmed)) {
+          inFence = !inFence;
+          bodyLines.push(line);
+          i++;
+          continue;
+        }
+
+        if (!inFence) {
+          const defMatch = line.match(/^\[\^([^\]\n]+)\]:[ \t]?(.*)$/);
+          if (defMatch) {
+            const id = defMatch[1];
+            let content = defMatch[2];
+            i++;
+            while (i < lines.length) {
+              const nextTrimmed = lines[i].trim();
+              if (/^(```|~~~)/.test(nextTrimmed)) {
+                break;
+              }
+              if (!/^(?:    |\t)/.test(lines[i])) {
+                break;
+              }
+              content += '\n' + lines[i].replace(/^(?:    |\t)/, '');
+              i++;
+            }
+            definitions.set(id, content.trim());
+            continue;
+          }
+        }
+
+        bodyLines.push(line);
+        i++;
+      }
+
+      let body = bodyLines.join('\n');
+      inFence = false;
+      const protectedLines = body.split('\n').map((line) => {
+        const trimmed = line.trim();
+        if (/^(```|~~~)/.test(trimmed)) {
+          inFence = !inFence;
+        }
+        return inFence ? line : line.replace(/\[\^([^\]\n]+)\]/g, (full, id) => {
+          if (!definitions.has(id)) {
+            return full;
+          }
+          let index = footnoteOrder.indexOf(id);
+          if (index === -1) {
+            footnoteOrder.push(id);
+            index = footnoteOrder.length - 1;
+          }
+          const phId = refPlaceholders.length;
+          const occurrence = (refCounts.get(id) || 0) + 1;
+          refCounts.set(id, occurrence);
+          refPlaceholders.push({ id: id, num: index + 1, occurrence: occurrence });
+          return 'XFNREFPH' + phId + 'XEND';
+        });
+      });
+      body = protectedLines.join('\n');
+
+      return { body: body, definitions: definitions, footnoteOrder: footnoteOrder, refPlaceholders: refPlaceholders, refCounts: refCounts };
+    }
+
+    function replaceFootnotePlaceholders(html, refPlaceholders) {
+      refPlaceholders.forEach((ref, phId) => {
+        const slug = footnoteSlug(ref.id);
+        const replacement = '<sup class="footnote-ref"><a href="#fn-' + slug +
+          '" id="fnref-' + slug + '-' + ref.occurrence + '">' + ref.num + '</a></sup>';
+        html = html.split('XFNREFPH' + phId + 'XEND').join(replacement);
+      });
+      return html;
+    }
+
+    function renderFootnotesSection(definitions, footnoteOrder, refCounts) {
+      if (footnoteOrder.length === 0) {
+        return '';
+      }
+
+      let html = '<section class="footnotes"><ol>';
+      footnoteOrder.forEach((id) => {
+        const slug = footnoteSlug(id);
+        const content = definitions.get(id) || '';
+        const parsed = marked.parseInline(content);
+        const count = refCounts.get(id) || 0;
+        let backref = '';
+        if (count === 1) {
+          backref = ' <a href="#fnref-' + slug + '-1" class="footnote-backref" aria-label="Back to reference">↩</a>';
+        }
+        html += '<li id="fn-' + slug + '">' + parsed + backref + '</li>';
+      });
+      html += '</ol></section>';
+      return html;
+    }
+
+    function renderBlocksHtml(markdown) {
+      resetMathSegments();
+      const footnotes = preprocessFootnotes(markdown);
+      const blocks = splitMarkdownBlocks(footnotes.body);
+      let html = blocks.map((block) => {
+        const safeMarkdown = protectMath(block.text, false);
+        const parsed = normalizeMermaidHtml(marked.parse(safeMarkdown));
+        return '<section class="md-block" data-line="' + block.startLine + '">' + parsed + '</section>';
+      }).join('');
+      html = replaceFootnotePlaceholders(html, footnotes.refPlaceholders);
+      html += renderFootnotesSection(footnotes.definitions, footnotes.footnoteOrder, footnotes.refCounts);
+      return html;
+    }
+
+    function blockForLine(line) {
+      const blocks = document.querySelectorAll('.md-block[data-line]');
+      if (!blocks.length) {
+        return null;
+      }
+      let target = blocks[0];
+      for (const block of blocks) {
+        const blockLine = parseInt(block.dataset.line, 10);
+        if (blockLine <= line) {
+          target = block;
+        } else {
+          break;
+        }
+      }
+      return target;
+    }
+
+    function isBlockPartiallyVisible(block) {
+      const rect = block.getBoundingClientRect();
+      return rect.bottom > 0 && rect.top < window.innerHeight;
+    }
+
+    function highlightActiveBlock(line) {
+      document.querySelectorAll('.md-block[data-active="true"]').forEach((node) => {
+        node.removeAttribute('data-active');
+      });
+      const block = blockForLine(line);
+      if (block) {
+        block.setAttribute('data-active', 'true');
+      }
+    }
+
+    function scrollPreviewForEditor(anchorLine, cursorLine) {
+      window._syncFromEditor = true;
+      const anchorBlock = blockForLine(anchorLine);
+      if (anchorBlock) {
+        const goal = anchorBlock.offsetTop - window.innerHeight * 0.22;
+        window.scrollTo({ top: Math.max(0, goal), behavior: 'auto' });
+      }
+
+      const cursorBlock = cursorLine > 0 ? blockForLine(cursorLine) : null;
+      if (cursorBlock && !isBlockPartiallyVisible(cursorBlock)) {
+        cursorBlock.scrollIntoView({ block: 'nearest', behavior: 'auto' });
+      }
+
+      highlightActiveBlock(cursorLine > 0 ? cursorLine : anchorLine);
+      clearTimeout(window._syncFromEditorTimer);
+      window._syncFromEditorTimer = setTimeout(() => {
+        window._syncFromEditor = false;
+      }, 120);
+    }
+
+    function scrollPreviewToLine(line) {
+      scrollPreviewForEditor(line, line);
+    }
+
+    function getPreviewScrollAnchor() {
+      const viewTop = window.scrollY;
+      const probe = viewTop + window.innerHeight * 0.22;
+      const blocks = document.querySelectorAll('.md-block[data-line]');
+      let line = 1;
+      for (const block of blocks) {
+        const top = block.offsetTop;
+        const bottom = top + block.offsetHeight;
+        if (top <= probe && bottom > viewTop) {
+          line = parseInt(block.dataset.line, 10);
+        }
+      }
+      const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      const ratio = maxScroll > 0 ? viewTop / maxScroll : 0;
+      return { line: line, ratio: ratio };
+    }
+
+    function installPreviewScrollListener() {
+      if (window._previewScrollListenerInstalled) {
+        return;
+      }
+      window._previewScrollListenerInstalled = true;
+      let timer = null;
+      window.addEventListener('scroll', () => {
+        if (window._syncFromEditor) {
+          return;
+        }
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          if (window._syncFromEditor || !window.scrollBridge) {
+            return;
+          }
+          const anchor = getPreviewScrollAnchor();
+          if (typeof window.scrollBridge.reportPreviewScroll === 'function') {
+            window.scrollBridge.reportPreviewScroll(anchor.line, anchor.ratio);
+          }
+        }, 70);
+      }, { passive: true });
+    }
+
+    function initWebChannel() {
+      if (typeof QWebChannel === 'undefined' || typeof qt === 'undefined' || !qt.webChannelTransport) {
+        return;
+      }
+      new QWebChannel(qt.webChannelTransport, (channel) => {
+        window.scrollBridge = channel.objects.scrollBridge;
+        installPreviewScrollListener();
+      });
+    }
+
+    initWebChannel();
+    window.previewReady = true;
+  </script>
+</body>
+</html>

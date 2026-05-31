@@ -1,0 +1,20 @@
+pkgbase = simplemd
+	pkgdesc = Minimal markdown editor with live preview
+	pkgver = 1.0.0
+	pkgrel = 1
+	url = https://github.com/kde/simplemd
+	arch = x86_64
+	license = GPL-3.0-or-later
+	makedepends = cmake
+	makedepends = extra-cmake-modules
+	makedepends = qt6-tools
+	depends = qt6-base
+	depends = qt6-declarative
+	depends = qt6-webengine
+	depends = kirigami
+	depends = ki18n
+	depends = kcoreaddons
+	depends = qqc2-desktop-style
+	depends = kiconthemes
+
+pkgname = simplemd
