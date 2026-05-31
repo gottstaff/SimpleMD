@@ -12,7 +12,7 @@
 
 SimpleMD is spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown rendered well in a focused full-screen window and a minimal AI assistant because I'm fed up with writing formulae in LaTeX.
 
-There are **no published packages** yet (no AUR listing). On Manjaro / Arch, use the install script below.
+There are **no published packages**. On Manjaro / Arch, use the install script below.
 
 ![SimpleMD split editor with live preview](docs/screenshot.png)
 
@@ -67,7 +67,7 @@ Remove SimpleMD and dependencies that no other installed package needs:
 sudo pacman -Rs simplemd
 ```
 
-Pacman keeps removed config files as `.pacsave` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
+Pacman keeps removed config files as `.pacsavehttps://github.com/gottstaff/SimpleMD` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
 
 To remove leftover orphan packages, list them first and confirm the output looks right:
 
