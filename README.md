@@ -6,7 +6,7 @@
 
 <p align="center">A minimal KDE markdown editor with live preview.</p>
 
-<p align="center"><strong>Work in progress.</strong> A personal project built for the neurodivergent workflow.</p>
+<p align="center"><strong>Work in progress.</strong> A personal project built for a low-noise neurodivergent workflow.</p>
 
 ## About
 
@@ -19,12 +19,12 @@ There are **no published packages**. On Manjaro / Arch, use the install script b
 ## Features
 
 - **Split-pane editing.** Markdown on the left, live preview on the right.
-- **Single pane mode** Markdown comfortably centered when expression matters.
+- **Single pane mode.** Markdown comfortably centered when expression matters.
 - **Rich preview.** Math (KaTeX), chemistry (mhchem), Mermaid diagrams, …
 - **Document outline.** Jump between headings in long documents.
 - **Insert menus.** Snippets for common markdown, math, basic chemistry, citations, …
 - **Images.** Insert or paste; on save, optionally copy into an `images/` folder beside the document.
-- **PDF export.** Print or save from the preview with basic formatting oprtions.
+- **PDF export.** Print or save from the preview with basic formatting options.
 - **Light AI editing.** One optional command for quick rewrites (see below).
 - **KDE-native.** Kirigami UI, desktop theming, full-screen focus mode.
 
@@ -67,7 +67,7 @@ Remove SimpleMD and dependencies that no other installed package needs:
 sudo pacman -Rs simplemd
 ```
 
-Pacman keeps removed config files as `.pacsavehttps://github.com/gottstaff/SimpleMD` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
+Pacman keeps removed config files as `.pacsave` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
 
 To remove leftover orphan packages, list them first and confirm the output looks right:
 
