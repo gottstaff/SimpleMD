@@ -6,11 +6,11 @@
 
 <p align="center">A minimal KDE markdown editor with live preview.</p>
 
-<p align="center"><strong>Work in progress.</strong> A personal project built for the author’s own writing workflow.</p>
+<p align="center"><strong>Work in progress.</strong> A personal project built for the neurodivergent workflow.</p>
 
 ## About
 
-SimpleMD is intentionally spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown, rendered well, in a focused full-screen window. It is shaped by one person’s needs rather than a product roadmap.
+SimpleMD is spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown rendered well in a focused full-screen window and a minimal AI assistant because I'm fed up with writing formulae in LaTeX.
 
 There are **no published packages** yet (no AUR listing). On Manjaro / Arch, use the install script below.
 
@@ -19,11 +19,12 @@ There are **no published packages** yet (no AUR listing). On Manjaro / Arch, use
 ## Features
 
 - **Split-pane editing.** Markdown on the left, live preview on the right.
-- **Rich preview.** Math (KaTeX), chemistry (mhchem), and Mermaid diagrams.
+- **Single pane mode** Markdown comfortably centered when expression matters.
+- **Rich preview.** Math (KaTeX), chemistry (mhchem), Mermaid diagrams, …
 - **Document outline.** Jump between headings in long documents.
-- **Insert menus.** Snippets for common markdown, math, and citations.
+- **Insert menus.** Snippets for common markdown, math, basic chemistry, citations, …
 - **Images.** Insert or paste; on save, optionally copy into an `images/` folder beside the document.
-- **PDF export.** Print or save from the preview.
+- **PDF export.** Print or save from the preview with basic formatting oprtions.
 - **Light AI editing.** One optional command for quick rewrites (see below).
 - **KDE-native.** Kirigami UI, desktop theming, full-screen focus mode.
 
@@ -42,9 +43,9 @@ Any **OpenAI-compatible** `/chat/completions` endpoint works:
 
 Configure **API base URL**, **Model**, and related options in **Settings → Preferences…** (AI section).
 
-**Privacy:** each request sends your instruction plus either the current selection or ~1,200 characters of context around the cursor to the configured server. With an external provider, that content leaves your machine.
+**Privacy:** each request sends your instruction plus either the current selection or ~1,200 characters of context around the cursor or the selected text to the configured server. **With an external provider, that content leaves your machine**.
 
-**Security:** the API key is stored in Qt settings on disk **in plain text** (not encrypted).
+**Security:** the API key is stored in Qt settings on disk **in plain text** (not encrypted yet).
 
 AI is optional. Without it, the editor runs normally (offline aside from WebEngine’s usual needs).
 
