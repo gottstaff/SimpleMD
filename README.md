@@ -4,101 +4,99 @@
 
 <h1 align="center">SimpleMD</h1>
 
-<p align="center">
-  A minimal KDE markdown editor with live preview.
-</p>
+<p align="center">A minimal KDE markdown editor with live preview.</p>
+
+<p align="center"><strong>Work in progress.</strong> A personal project built for the author’s own writing workflow.</p>
+
+## About
+
+SimpleMD is intentionally spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown, rendered well, in a focused full-screen window. It is shaped by one person’s needs rather than a product roadmap.
+
+There are **no published packages** yet (no AUR listing, no distro packages). Install by building from source.
 
 ![SimpleMD split editor with live preview](docs/screenshot.png)
 
 ## Features
 
-- **Split-pane editing** — write markdown on the left and see a live preview on the right
-- **Rich preview** — math (KaTeX), chemistry (mhchem), and Mermaid diagrams via Qt WebEngine
-- **Document outline** — navigate headings in long documents
-- **Insert menus** — quick access to common markdown, math, and citation snippets
-- **Light AI editing** — one optional “Edit with AI” command for quick rewrites and insertions (see below)
-- **PDF export** — print or save documents from the preview
-- **KDE-native** — Kirigami UI, desktop theming, and full-screen focus mode
+- **Split-pane editing.** Markdown on the left, live preview on the right.
+- **Rich preview.** Math (KaTeX), chemistry (mhchem), and Mermaid diagrams.
+- **Document outline.** Jump between headings in long documents.
+- **Insert menus.** Snippets for common markdown, math, and citations.
+- **Images.** Insert or paste; on save, optionally copy into an `images/` folder beside the document.
+- **PDF export.** Print or save from the preview.
+- **Light AI editing.** One optional command for quick rewrites (see below).
+- **KDE-native.** Kirigami UI, desktop theming, full-screen focus mode.
 
-## AI-assisted editing
+## AI-assisted light editing
 
-SimpleMD includes a deliberately small AI feature: one command, one dialog, and direct application of the result. There is no chat panel, no preset action menu, no streaming, and no diff review step — the goal is a fast helper for small markdown edits, not a full writing assistant.
-
-AI is entirely optional: without an API key, the rest of the editor works as usual. Requests are sent only when you explicitly run **Edit with AI**.
+One dialog, direct apply. Mo chat panel, presets, streaming, or diff review.
 
 ![AI edit demo](docs/ai-demo.gif)
 
-## Building
+Any **OpenAI-compatible** `/chat/completions` endpoint works:
 
-### Arch / Manjaro
+| Setup | API base URL | API key |
+| --- | --- | --- |
+| Cloud (OpenAI, DeepSeek, …) | Provider URL | Your API key |
+| Local (Ollama, llama.cpp, LM Studio, …) | e.g. `http://127.0.0.1:11434/v1` | Whatever the server expects (often any placeholder) |
 
-From the repository root:
+Configure **API base URL**, **Model**, and related options in **Settings → Preferences…** (AI section).
+
+**Privacy:** each request sends your instruction plus either the current selection or ~1,200 characters of context around the cursor to the configured server. With an external provider, that content leaves your machine.
+
+**Security:** the API key is stored in Qt settings on disk **in plain text** (not encrypted).
+
+AI is optional. Without it, the editor runs normally (offline aside from WebEngine’s usual needs).
+
+## Install from source
+
+### Requirements
+
+- **Linux** with Qt 6 and KDE Frameworks 6
+- **KDE Plasma** is the primary target; other Qt 6 desktops may work
+- **x86_64** tested on Arch / Manjaro; other architectures untested
+
+On Arch / Manjaro, install runtime and build dependencies:
 
 ```bash
-./scripts/install-manjaro.sh
+sudo pacman -S --needed base-devel cmake extra-cmake-modules \
+  qt6-base qt6-declarative qt6-webengine qt6-tools \
+  kirigami ki18n kcoreaddons qqc2-desktop-style kiconthemes
 ```
 
-Or build the package manually:
+| Arch package | Role |
+| --- | --- |
+| `qt6-base`, `qt6-declarative` | Qt Quick, widgets, networking, print/PDF |
+| `qt6-webengine` | Live preview (Chromium-based) |
+| `kirigami`, `ki18n`, `kcoreaddons`, `qqc2-desktop-style`, `kiconthemes` | KDE UI and integration |
+| `cmake`, `extra-cmake-modules`, `qt6-tools`, `base-devel` | Build toolchain |
 
-```bash
-cd packaging/arch
-makepkg -si
-```
+On other distributions, install the equivalent Qt 6, KDE Frameworks 6, and CMake/ECM packages.
 
-### From source (CMake)
-
-Install the dependencies listed in `packaging/arch/PKGBUILD`, then:
+### Build and run
 
 ```bash
 cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build build --parallel
-sudo cmake --install build
+sudo cmake --install build   # optional
+simplemd                     # after install, or: ./build/bin/simplemd
 ```
 
-## Usage
+## Third-party licenses
 
-Launch from your application menu or run:
+| Component | License |
+| --- | --- |
+| [Qt 6](https://www.qt.io/) | LGPL-3.0-only |
+| [Qt WebEngine](https://doc.qt.io/qt-6/qtwebengine-index.html) | LGPL-3.0-only; includes [Chromium](https://www.chromium.org/) (BSD-3-Clause and others) |
+| [KDE Frameworks 6](https://api.kde.org/) (Kirigami, KI18n, KCoreAddons, …) | LGPL-2.0-or-later / LGPL-2.1-or-later |
+| [CMake](https://cmake.org/) | BSD-3-Clause |
+| [Extra CMake Modules](https://api.kde.org/ecm/) | BSD-2-Clause |
+| [marked](https://github.com/markedjs/marked) | MIT |
+| [KaTeX](https://katex.org/) | MIT |
+| [mhchem](https://github.com/KaTeX/KaTeX/tree/main/contrib/mhchem) | Apache-2.0 |
+| [Mermaid](https://mermaid.js.org/) | MIT |
 
-```bash
-simplemd
-```
-
-## Dependencies
-
-SimpleMD is built with Qt 6 and KDE Frameworks 6. The live preview bundles several JavaScript libraries under `resources/preview/vendor/`.
-
-### Runtime
-
-| Dependency | Arch package | License |
-| --- | --- | --- |
-| [Qt 6](https://www.qt.io/) (Core, Quick, Gui, Network, Quick Controls 2, Widgets, Print Support, PDF, WebChannel) | `qt6-base`, `qt6-declarative` | LGPL-3.0-only |
-| [Qt WebEngine](https://doc.qt.io/qt-6/qtwebengine-index.html) | `qt6-webengine` | LGPL-3.0-only; includes [Chromium](https://www.chromium.org/) (BSD-3-Clause and other licenses) |
-| [Kirigami](https://develop.kde.org/docs/plasma/kirigami/) | `kirigami` | LGPL-2.1-or-later |
-| [KI18n](https://api.kde.org/frameworks/ki18n/html/) | `ki18n` | LGPL-2.0-or-later |
-| [KCoreAddons](https://api.kde.org/frameworks/kcoreaddons/html/) | `kcoreaddons` | LGPL-2.0-or-later |
-| [QQC2 Desktop Style](https://invent.kde.org/frameworks/qqc2-desktop-style) | `qqc2-desktop-style` | LGPL-2.0-or-later |
-| [KIconThemes](https://api.kde.org/frameworks/kiconthemes/html/) | `kiconthemes` | LGPL-2.0-or-later |
-
-### Build-only
-
-| Dependency | Arch package | License |
-| --- | --- | --- |
-| [CMake](https://cmake.org/) | `cmake` | BSD-3-Clause |
-| [Extra CMake Modules](https://api.kde.org/ecm/) | `extra-cmake-modules` | BSD-2-Clause |
-| [Qt 6 tools](https://www.qt.io/) | `qt6-tools` | LGPL-3.0-only |
-
-### Bundled preview libraries
-
-These are vendored into the application for markdown rendering in the preview pane:
-
-| Library | Upstream | License |
-| --- | --- | --- |
-| [marked](https://github.com/markedjs/marked) | `resources/preview/vendor/marked.min.js` | MIT |
-| [KaTeX](https://katex.org/) | `resources/preview/vendor/katex.min.js`, `katex.min.css` | MIT |
-| [mhchem](https://github.com/KaTeX/KaTeX/tree/main/contrib/mhchem) (KaTeX extension) | `resources/preview/vendor/contrib/mhchem.min.js` | Apache-2.0 |
-| [Mermaid](https://mermaid.js.org/) | `resources/preview/vendor/mermaid.min.js` | MIT |
-
-Mermaid bundles additional third-party components (for example Lodash, DOMPurify, and js-yaml) under their respective licenses. See the bundled license comments at the end of `mermaid.min.js` for details.
+Bundled under `resources/preview/vendor/`. Mermaid includes additional libraries (Lodash, DOMPurify, js-yaml, …); see license comments in `mermaid.min.js`.
 
 ## License
 
