@@ -1,0 +1,26 @@
+# CMake / Qt build tree (repo-root checkout)
+/build/
+
+# Arch package build output (makepkg)
+/packaging/arch/pkg/
+/packaging/arch/src/
+/packaging/arch/*.pkg.tar.zst
+/packaging/arch/*.pkg.tar.zst.sig
+
+# Qt QML language server (generated)
+.qmlls.ini
+**/.qmlls.build.ini*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Local scratch files (use docs/ for README assets)
+/Captura*.png
+/recording.mp4

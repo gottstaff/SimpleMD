@@ -1,8 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/gus/projects/simple_editor/packaging/arch/src/build/cmake_install.cmake",
-		"/home/gus/projects/simple_editor/packaging/arch/src/build/src/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

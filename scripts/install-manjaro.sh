@@ -51,6 +51,9 @@ sudo pacman -S --needed --noconfirm "${deps[@]}"
 
 cd "${PKGDIR}"
 
+echo "==> Cleaning stale package build tree…"
+rm -rf "${PKGDIR}/src" "${PKGDIR}/pkg"
+
 echo "==> Building package with makepkg…"
 makepkg -f --noconfirm --nocheck
 

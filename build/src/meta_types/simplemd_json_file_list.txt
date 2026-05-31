@@ -1,6 +1,0 @@
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_bracketmatchhighlighter.cpp.json
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_documentcontroller.cpp.json
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_editorhelper.cpp.json
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_llmclient.cpp.json
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_previewhelper.cpp.json
-/home/gus/projects/simple_editor/build/src/simplemd_autogen/include/../EWIEGA46WW/moc_printhelper.cpp.json

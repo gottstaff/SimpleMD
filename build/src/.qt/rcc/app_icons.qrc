@@ -1,6 +1,0 @@
-<RCC>
-  <qresource prefix="/icons">
-    <file alias="org.kde.simplemd.png">/home/gus/projects/simple_editor/icons/128-apps-org.kde.simplemd.png</file>
-  </qresource>
-</RCC>
-
