@@ -12,7 +12,7 @@
 
 SimpleMD is intentionally spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown, rendered well, in a focused full-screen window. It is shaped by one person’s needs rather than a product roadmap.
 
-There are **no published packages** yet (no AUR listing, no distro packages). Install by building from source.
+There are **no published packages** yet (no AUR listing). On Manjaro / Arch, use the install script below.
 
 ![SimpleMD split editor with live preview](docs/screenshot.png)
 
@@ -29,7 +29,7 @@ There are **no published packages** yet (no AUR listing, no distro packages). In
 
 ## AI-assisted light editing
 
-One dialog, direct apply. Mo chat panel, presets, streaming, or diff review.
+One dialog, direct apply. No chat panel, presets, streaming, or diff review.
 
 ![AI edit demo](docs/ai-demo.gif)
 
@@ -48,38 +48,20 @@ Configure **API base URL**, **Model**, and related options in **Settings → Pre
 
 AI is optional. Without it, the editor runs normally (offline aside from WebEngine’s usual needs).
 
-## Install from source
+## Install
 
-### Requirements
-
-- **Linux** with Qt 6 and KDE Frameworks 6
-- **KDE Plasma** is the primary target; other Qt 6 desktops may work
-- **x86_64** tested on Arch / Manjaro; other architectures untested
-
-On Arch / Manjaro, install runtime and build dependencies:
+On Manjaro / Arch, from the repository root:
 
 ```bash
-sudo pacman -S --needed base-devel cmake extra-cmake-modules \
-  qt6-base qt6-declarative qt6-webengine qt6-tools \
-  kirigami ki18n kcoreaddons qqc2-desktop-style kiconthemes
+./scripts/install-manjaro.sh
 ```
 
-| Arch package | Role |
-| --- | --- |
-| `qt6-base`, `qt6-declarative` | Qt Quick, widgets, networking, print/PDF |
-| `qt6-webengine` | Live preview (Chromium-based) |
-| `kirigami`, `ki18n`, `kcoreaddons`, `qqc2-desktop-style`, `kiconthemes` | KDE UI and integration |
-| `cmake`, `extra-cmake-modules`, `qt6-tools`, `base-devel` | Build toolchain |
+The script installs dependencies, builds a local package, and installs it with `pacman`. Do not run it as root. Launch with `simplemd` or from the application menu.
 
-On other distributions, install the equivalent Qt 6, KDE Frameworks 6, and CMake/ECM packages.
-
-### Build and run
+## Uninstall
 
 ```bash
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
-cmake --build build --parallel
-sudo cmake --install build   # optional
-simplemd                     # after install, or: ./build/bin/simplemd
+sudo pacman -R simplemd
 ```
 
 ## Third-party licenses
