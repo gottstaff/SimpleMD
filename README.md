@@ -60,9 +60,22 @@ The script installs dependencies, builds a local package, and installs it with `
 
 ## Uninstall
 
+Remove SimpleMD and dependencies that no other installed package needs:
+
 ```bash
-sudo pacman -R simplemd
+sudo pacman -Rs simplemd
 ```
+
+Pacman keeps removed config files as `.pacsave` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
+
+To remove leftover orphan packages, list them first and confirm the output looks right:
+
+```bash
+pacman -Qtdq
+sudo pacman -Rns $(pacman -Qtdq)
+```
+
+Skip the second command if the list includes packages you still want, or if `pacman -Qtdq` prints nothing.
 
 ## Third-party licenses
 
