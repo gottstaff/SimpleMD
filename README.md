@@ -27,7 +27,9 @@ SimpleMD includes a deliberately small AI feature: one command, one dialog, and 
 AI is entirely optional: without an API key, the rest of the editor works as usual. Requests are sent only when you explicitly run **Edit with AI**.
 
 <p align="center">
-  <video src="docs/simplemd-demo.mp4" controls width="720"></video>
+  <a href="docs/simplemd-demo.mp4">
+    <img src="docs/ai-demo-poster.png" alt="AI edit demo" width="720">
+  </a>
 </p>
 
 ## Building
