@@ -80,20 +80,8 @@ Skip the second command if the list includes packages you still want, or if `pac
 
 ## Third-party licenses
 
-| Component | License |
-| --- | --- |
-| [Qt 6](https://www.qt.io/) | LGPL-3.0-only |
-| [Qt WebEngine](https://doc.qt.io/qt-6/qtwebengine-index.html) | LGPL-3.0-only; includes [Chromium](https://www.chromium.org/) (BSD-3-Clause and others) |
-| [KDE Frameworks 6](https://api.kde.org/) (Kirigami, KI18n, KCoreAddons, …) | LGPL-2.0-or-later / LGPL-2.1-or-later |
-| [CMake](https://cmake.org/) | BSD-3-Clause |
-| [Extra CMake Modules](https://api.kde.org/ecm/) | BSD-2-Clause |
-| [marked](https://github.com/markedjs/marked) | MIT |
-| [KaTeX](https://katex.org/) | MIT |
-| [mhchem](https://github.com/KaTeX/KaTeX/tree/main/contrib/mhchem) | Apache-2.0 |
-| [Mermaid](https://mermaid.js.org/) | MIT |
-
-Bundled under `resources/preview/vendor/`. Mermaid includes additional libraries (Lodash, DOMPurify, js-yaml, …); see license comments in `mermaid.min.js`.
+See `THIRD_PARTY_LICENSES.md` for bundled vendor assets and Mermaid-related third-party licensing details.
 
 ## License
 
-SimpleMD is licensed under **GPL-3.0-or-later**.
+SimpleMD is licensed under **GPL-3.0-or-later**. See `LICENSE`.
