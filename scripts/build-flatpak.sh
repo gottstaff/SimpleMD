@@ -18,6 +18,12 @@ APP_ID="io.github.gottstaff.SimpleMD"
 LOCAL_REMOTE="simplemd-local"
 INSTALL_AFTER_BUILD=0
 
+# GitHub Actions and some CI images disallow system-wide Flatpak; use --user there.
+FPK=()
+if [[ -n "${FLATPAK_USER:-}" ]]; then
+  FPK=(--user)
+fi
+
 for arg in "$@"; do
   case "${arg}" in
     --install) INSTALL_AFTER_BUILD=1 ;;
@@ -49,13 +55,13 @@ for cmd in flatpak flatpak-builder; do
   fi
 done
 
-if ! flatpak remote-list | grep -q '^flathub'; then
+if ! flatpak "${FPK[@]}" remote-list | grep -q '^flathub'; then
   echo "==> Adding Flathub remote…"
-  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak "${FPK[@]}" remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 fi
 
 echo "==> Ensuring Flatpak build runtimes (from Flathub)…"
-flatpak install -y --noninteractive flathub \
+flatpak "${FPK[@]}" install -y --noninteractive flathub \
   "org.kde.Platform//${RUNTIME_VERSION}" \
   "org.kde.Sdk//${RUNTIME_VERSION}" \
   "io.qt.qtwebengine.BaseApp//${RUNTIME_VERSION}"
@@ -63,11 +69,11 @@ flatpak install -y --noninteractive flathub \
 mkdir -p "${REPO}"
 
 echo "==> Building Flatpak…"
-flatpak-builder --force-clean \
-  --install-deps-from=flathub \
-  --repo="${REPO}" \
-  "${BUILDDIR}" \
-  "${MANIFEST}"
+FB_ARGS=(--force-clean --install-deps-from=flathub --repo="${REPO}" "${BUILDDIR}" "${MANIFEST}")
+if [[ ${#FPK[@]} -gt 0 ]]; then
+  FB_ARGS=(--user "${FB_ARGS[@]}")
+fi
+flatpak-builder "${FB_ARGS[@]}"
 
 echo "==> Updating repository metadata…"
 flatpak build-update-repo "${REPO}"

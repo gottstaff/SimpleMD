@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SimpleMD — Flatpak</title>
+  <style>
+    :root { color-scheme: light dark; }
+    body {
+      font-family: system-ui, sans-serif;
+      line-height: 1.5;
+      max-width: 42rem;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    pre {
+      overflow-x: auto;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background: color-mix(in srgb, CanvasText 8%, Canvas);
+    }
+    a { color: LinkText; }
+  </style>
+</head>
+<body>
+  <h1>SimpleMD</h1>
+  <p>Static Flatpak repository for the
+    <a href="https://github.com/gottstaff/SimpleMD">SimpleMD</a> markdown editor.</p>
+  <h2>Install</h2>
+  <pre><code>flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak remote-add --user --if-not-exists --no-gpg-verify simplemd \
+  https://gottstaff.github.io/SimpleMD/simplemd.flatpakrepo
+flatpak install --user simplemd io.github.gottstaff.SimpleMD</code></pre>
+  <p>Full documentation: <a href="https://github.com/gottstaff/SimpleMD#readme">README on GitHub</a>.</p>
+</body>
+</html>
