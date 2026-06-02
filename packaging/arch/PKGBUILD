@@ -4,7 +4,7 @@ pkgver=1.0.0
 pkgrel=12
 pkgdesc="Minimal markdown editor with live preview"
 arch=('x86_64')
-url="https://github.com/kde/simplemd"
+url="https://github.com/gottstaff/SimpleMD"
 license=('GPL-3.0-or-later')
 depends=(
   'qt6-base'
