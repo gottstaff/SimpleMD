@@ -1,7 +1,7 @@
 add_executable(simplemd)
 
 ecm_add_qml_module(simplemd
-    URI org.kde.simplemd
+    URI io.github.gottstaff.SimpleMD
 )
 
 target_sources(simplemd
@@ -30,8 +30,8 @@ get_filename_component(PREVIEW_RES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources
 file(GLOB katex_fonts CONFIGURE_DEPENDS "${PREVIEW_RES_DIR}/vendor/fonts/*.woff2")
 
 get_filename_component(_project_root "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
-set(_app_icon_png "${_project_root}/icons/128-apps-org.kde.simplemd.png")
-set_source_files_properties("${_app_icon_png}" PROPERTIES QT_RESOURCE_ALIAS "org.kde.simplemd.png")
+set(_app_icon_png "${_project_root}/icons/128-apps-io.github.gottstaff.SimpleMD.png")
+set_source_files_properties("${_app_icon_png}" PROPERTIES QT_RESOURCE_ALIAS "io.github.gottstaff.SimpleMD.png")
 
 qt_add_resources(simplemd "app_icons"
     PREFIX "/icons"

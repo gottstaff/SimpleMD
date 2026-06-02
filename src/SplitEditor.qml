@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import QtWebEngine
 import QtWebChannel
 import org.kde.kirigami as Kirigami
-import org.kde.simplemd
+import io.github.gottstaff.SimpleMD
 import "editorfonts.js" as EditorFonts
 
 Item {

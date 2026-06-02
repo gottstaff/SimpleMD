@@ -3,8 +3,8 @@
 Name=SimpleMD
 Comment=Minimal markdown editor with live preview
 Exec=simplemd
-Icon=org.kde.simplemd
+Icon=io.github.gottstaff.SimpleMD
 Type=Application
 Terminal=false
 Categories=Utility;TextEditor;
-StartupWMClass=org.kde.simplemd
+StartupWMClass=io.github.gottstaff.SimpleMD

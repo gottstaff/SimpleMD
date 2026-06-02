@@ -24,3 +24,7 @@ Thumbs.db
 # Local scratch files (use docs/ for README assets)
 /Captura*.png
 /recording.mp4
+
+# Flatpak build output
+/packaging/flatpak/builddir/
+/packaging/flatpak/repo/

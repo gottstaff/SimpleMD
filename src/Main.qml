@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Dialogs
 import QtCore
 import org.kde.kirigami as Kirigami
-import org.kde.simplemd
+import io.github.gottstaff.SimpleMD
 
 Kirigami.ApplicationWindow {
     id: root
@@ -1286,9 +1286,7 @@ Kirigami.ApplicationWindow {
                     id: systemPromptField
 
                     width: systemPromptScroll.availableWidth
-                    implicitHeight: Math.max(
-                        systemPromptScroll.availableHeight,
-                        contentHeight + topPadding + bottomPadding)
+                    implicitHeight: contentHeight + topPadding + bottomPadding
                     wrapMode: TextEdit.Wrap
                     text: preferences.aiSystemPrompt
                     onTextChanged: preferences.aiSystemPrompt = text
