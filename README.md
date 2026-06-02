@@ -12,7 +12,7 @@
 
 SimpleMD is spartan: a split editor, a live preview, and little else. No plugin system, no cloud sync, no bloated toolbar. Just markdown rendered well in a focused full-screen window and a minimal AI assistant because I'm fed up with writing formulae in LaTeX.
 
-There are **no published packages** on Flathub or in distro repos yet. On Manjaro / Arch, use the install script below. On other Linux systems with Flatpak, see the Flatpak section.
+On Manjaro / Arch, use the install script below. On other Linux systems with Flatpak, see the Flatpak section.
 
 ![SimpleMD split editor with live preview](docs/screenshot.png)
 
@@ -63,50 +63,16 @@ The script installs dependencies, builds a local package, and installs it with `
 
 ### Flatpak
 
-Flatpak builds are supported; Flathub submission is not planned yet. The app is distributed from a self-hosted repository on GitHub Pages. KDE/Qt runtimes are pulled from Flathub automatically — that is a dependency, not an endorsement.
-
-**Prerequisites**
-
 ```bash
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-```
-
-**Add the SimpleMD repository and install**
-
-```bash
 flatpak remote-add --user --if-not-exists --no-gpg-verify simplemd \
   https://gottstaff.github.io/SimpleMD/simplemd.flatpakrepo
-
 flatpak install --user simplemd io.github.gottstaff.SimpleMD
 ```
 
-On first install, Flatpak also installs `org.kde.Platform//6.10` and `io.qt.qtwebengine.BaseApp//6.10` from Flathub.
+Launch from the application menu or with `flatpak run io.github.gottstaff.SimpleMD`. Update with `flatpak update --user io.github.gottstaff.SimpleMD`.
 
-**Run**
-
-Launch **SimpleMD** from the application menu (Utility / Text Editor), or:
-
-```bash
-flatpak run io.github.gottstaff.SimpleMD
-```
-
-The menu entry is created automatically when the Flatpak is installed — no separate “add to menu” step.
-
-**Update**
-
-```bash
-flatpak update --user io.github.gottstaff.SimpleMD
-```
-
-**Build from source (developers)**
-
-```bash
-./scripts/build-flatpak.sh --install
-```
-
-That builds the OSTree repo under `packaging/flatpak/repo/` and installs it for local testing. Building alone does **not** install the app — you must install from a remote (GitHub Pages or the local repo) before `flatpak run` works.
-
-**Console noise when launching.** Messages such as `Session management error`, `Failed to connect to … system_bus_socket`, or `GBM is not supported … Fallback to Vulkan` are common for Qt WebEngine inside Flatpak and are usually harmless if the window and live preview work. The shortcut warnings come from KDE’s desktop style, not SimpleMD.
+Developers: `./scripts/build-flatpak.sh --install` (build alone does not install — you need a remote before `flatpak run` works).
 
 ## Uninstall
 
@@ -115,29 +81,18 @@ That builds the OSTree repo under `packaging/flatpak/repo/` and installs it for 
 Remove SimpleMD and dependencies that no other installed package needs:
 
 ```bash
-sudo pacman -Rs simplemd
+sudo pacman -Rns simplemd
 ```
-
-Pacman keeps removed config files as `.pacsave` entries. Add `-n` (`-Rns`) if you also want those config files deleted.
-
-To remove leftover orphan packages, list them first and confirm the output looks right:
-
-```bash
-pacman -Qtdq
-sudo pacman -Rns $(pacman -Qtdq)
-```
-
-Skip the second command if the list includes packages you still want, or if `pacman -Qtdq` prints nothing.
 
 ### Flatpak
 
-Remove the app:
+Uninstall the app:
 
 ```bash
 flatpak uninstall --user io.github.gottstaff.SimpleMD
 ```
 
-To remove **everything** SimpleMD-related (app, custom repository, unused runtimes, and saved settings):
+Remove everything (app, repository, sandbox settings, …):
 
 ```bash
 flatpak uninstall --user io.github.gottstaff.SimpleMD
@@ -146,9 +101,7 @@ flatpak uninstall --user --unused
 rm -rf ~/.var/app/io.github.gottstaff.SimpleMD
 ```
 
-The last command deletes preferences, recent files, and cache stored inside the Flatpak sandbox. Your markdown documents are **not** removed (they live in your home directory, not in that folder).
-
-Review `flatpak uninstall --user --unused` before confirming — it may remove KDE/Qt runtimes that other Flatpak apps still need.
+Check the list before confirming `--unused`; it may remove KDE/Qt runtimes other Flatpak apps still need.
 
 ## Third-party licenses
 
