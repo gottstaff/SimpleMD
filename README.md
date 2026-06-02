@@ -6,7 +6,7 @@
 
 <p align="center">A minimal KDE markdown editor with live preview.</p>
 
-<p align="center">Work in progress. This is a personal tool designed for a low-distraction, neurodivergent-friendly workflow that encourages hyperfocus. <strong>SimpleMD is not designed with broad accessibility in mind.</strong></p>
+<p align="center">Work in progress. This is a personal tool designed for a low-distraction, neurodivergent workflow that encourages hyperfocus. <strong>SimpleMD is not designed with broad accessibility in mind.</strong></p>
 
 ## About
 
