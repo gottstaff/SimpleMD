@@ -25,12 +25,14 @@ On Manjaro / Arch, use the install script below. On other Linux systems with Fla
 - **Insert menus.** Snippets for common markdown, math, basic chemistry, citations, …
 - **Images.** Insert or paste; on save, optionally copy into an `images/` folder beside the document.
 - **PDF export.** Print or save from the preview with basic formatting options.
-- **Light AI editing.** One optional command for quick rewrites (see below).
+- **Light AI editing.** One optional command for quick rewrites and insertions (see below).
 - **KDE-native.** Kirigami UI, desktop theming, full-screen focus mode.
 
 ## AI-assisted light editing
 
 One dialog, direct apply. No chat panel, presets, streaming, or diff review.
+
+Rewrite a paragraph, translate a sentence, insert an equation or a chemical compound in $\LaTeX$, create tables, …
 
 ![AI edit demo](docs/ai-demo.gif)
 
@@ -72,8 +74,6 @@ flatpak install --user simplemd io.github.gottstaff.SimpleMD
 
 Launch from the application menu or with `flatpak run io.github.gottstaff.SimpleMD`. Update with `flatpak update --user io.github.gottstaff.SimpleMD`.
 
-Developers: `./scripts/build-flatpak.sh --install` (build alone does not install — you need a remote before `flatpak run` works).
-
 ## Uninstall
 
 ### Manjaro / Arch
@@ -105,7 +105,7 @@ Check the list before confirming `--unused`; it may remove KDE/Qt runtimes other
 
 ## Third-party licenses
 
-See `THIRD_PARTY_LICENSES.md` for bundled vendor assets and Mermaid-related third-party licensing details.
+See [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md) for bundled vendor assets and Mermaid-related third-party licensing details.
 
 ## License
 
