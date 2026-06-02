@@ -33,11 +33,11 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName(QStringLiteral("KDE"));
     QApplication::setOrganizationDomain(QStringLiteral("kde.org"));
     QApplication::setApplicationName(QStringLiteral("SimpleMD"));
-    QApplication::setDesktopFileName(QStringLiteral("org.kde.simplemd"));
+    QApplication::setDesktopFileName(QStringLiteral("io.github.gottstaff.SimpleMD"));
 
-    QIcon appIcon = QIcon::fromTheme(QStringLiteral("org.kde.simplemd"));
+    QIcon appIcon = QIcon::fromTheme(QStringLiteral("io.github.gottstaff.SimpleMD"));
     if (appIcon.isNull()) {
-        appIcon = QIcon(QStringLiteral(":/icons/org.kde.simplemd.png"));
+        appIcon = QIcon(QStringLiteral(":/icons/io.github.gottstaff.SimpleMD.png"));
     }
     QApplication::setWindowIcon(appIcon);
 
@@ -46,15 +46,15 @@ int main(int argc, char *argv[])
         QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
     }
 
-    qmlRegisterType<DocumentController>("org.kde.simplemd", 1, 0, "DocumentController");
-    qmlRegisterType<LlmClient>("org.kde.simplemd", 1, 0, "LlmClient");
-    qmlRegisterType<PreviewHelper>("org.kde.simplemd", 1, 0, "PreviewHelper");
-    qmlRegisterType<PrintHelper>("org.kde.simplemd", 1, 0, "PrintHelper");
-    qmlRegisterType<EditorHelper>("org.kde.simplemd", 1, 0, "EditorHelper");
+    qmlRegisterType<DocumentController>("io.github.gottstaff.SimpleMD", 1, 0, "DocumentController");
+    qmlRegisterType<LlmClient>("io.github.gottstaff.SimpleMD", 1, 0, "LlmClient");
+    qmlRegisterType<PreviewHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PreviewHelper");
+    qmlRegisterType<PrintHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PrintHelper");
+    qmlRegisterType<EditorHelper>("io.github.gottstaff.SimpleMD", 1, 0, "EditorHelper");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextObject(new KLocalizedContext(&engine));
-    engine.loadFromModule(QStringLiteral("org.kde.simplemd"), QStringLiteral("Main"));
+    engine.loadFromModule(QStringLiteral("io.github.gottstaff.SimpleMD"), QStringLiteral("Main"));
 
     if (engine.rootObjects().isEmpty()) {
         return -1;

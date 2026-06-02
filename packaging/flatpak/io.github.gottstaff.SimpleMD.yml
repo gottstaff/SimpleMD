@@ -1,0 +1,32 @@
+id: io.github.gottstaff.SimpleMD
+runtime: org.kde.Platform
+runtime-version: '6.10'
+sdk: org.kde.Sdk
+base: io.qt.qtwebengine.BaseApp
+base-version: '6.10'
+command: simplemd
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  - --env=QTWEBENGINEPROCESS_PATH=/app/bin/QtWebEngineProcess
+  - --share=network
+  - --filesystem=home
+  - --socket=cups
+cleanup-commands:
+  - /app/cleanup-BaseApp.sh
+modules:
+  - name: simplemd
+    buildsystem: cmake-ninja
+    builddir: true
+    config-opts:
+      - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_INSTALL_PREFIX=/app
+      - -Wno-dev
+    build-options:
+      env:
+        QTWEBENGINE_DISABLE_SANDBOX: '1'
+    sources:
+      - type: dir
+        path: ../..

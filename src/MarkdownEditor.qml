@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import org.kde.kirigami as Kirigami
-import org.kde.simplemd
+import io.github.gottstaff.SimpleMD
 import "editorfonts.js" as EditorFonts
 
 Item {

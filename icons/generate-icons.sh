@@ -4,7 +4,7 @@ set -euo pipefail
 root="$(cd "$(dirname "$0")/.." && pwd)"
 src="${root}/kde-minimal-markdown-editor-icon-v2.svg"
 out="${root}/icons"
-processed="${out}/sc-apps-org.kde.simplemd.svg"
+processed="${out}/sc-apps-io.github.gottstaff.SimpleMD.svg"
 
 if [[ ! -f "$src" ]]; then
     echo "Missing source icon: $src" >&2
@@ -48,7 +48,7 @@ EOF
 
 for size in 16 22 24 32 48 64 128 256; do
     rsvg-convert -w "$size" -h "$size" "$processed" \
-        -o "${out}/${size}-apps-org.kde.simplemd.png"
+        -o "${out}/${size}-apps-io.github.gottstaff.SimpleMD.png"
 done
 
 echo "Icons written to ${out}/"

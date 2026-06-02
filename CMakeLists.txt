@@ -40,19 +40,19 @@ ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 add_subdirectory(src)
 
-install(PROGRAMS org.kde.simplemd.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(PROGRAMS io.github.gottstaff.SimpleMD.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 
 ecm_install_icons(
     ICONS
-        icons/16-apps-org.kde.simplemd.png
-        icons/22-apps-org.kde.simplemd.png
-        icons/24-apps-org.kde.simplemd.png
-        icons/32-apps-org.kde.simplemd.png
-        icons/48-apps-org.kde.simplemd.png
-        icons/64-apps-org.kde.simplemd.png
-        icons/128-apps-org.kde.simplemd.png
-        icons/256-apps-org.kde.simplemd.png
-        icons/sc-apps-org.kde.simplemd.svg
+        icons/16-apps-io.github.gottstaff.SimpleMD.png
+        icons/22-apps-io.github.gottstaff.SimpleMD.png
+        icons/24-apps-io.github.gottstaff.SimpleMD.png
+        icons/32-apps-io.github.gottstaff.SimpleMD.png
+        icons/48-apps-io.github.gottstaff.SimpleMD.png
+        icons/64-apps-io.github.gottstaff.SimpleMD.png
+        icons/128-apps-io.github.gottstaff.SimpleMD.png
+        icons/256-apps-io.github.gottstaff.SimpleMD.png
+        icons/sc-apps-io.github.gottstaff.SimpleMD.svg
     DESTINATION ${KDE_INSTALL_ICONDIR}
     THEME hicolor
 )
