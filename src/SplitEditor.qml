@@ -452,22 +452,55 @@ Item {
         )
     }
 
+    function findSearchAnchor(term, backward) {
+        const haystack = editor.text
+        const selStart = Math.min(editor.selectionStart, editor.selectionEnd)
+        const selEnd = Math.max(editor.selectionStart, editor.selectionEnd)
+        const selectionIsTerm = selEnd - selStart === term.length
+                && haystack.slice(selStart, selEnd) === term
+
+        if (backward) {
+            let matchStart = selStart
+            if (selectionIsTerm) {
+                matchStart = selStart
+            } else if (selStart === selEnd && selStart >= term.length
+                       && haystack.slice(selStart - term.length, selStart) === term) {
+                // Collapsed cursor sitting just after a match (common when the find dialog has focus).
+                matchStart = selStart - term.length
+            }
+            return matchStart > 0 ? matchStart - 1 : haystack.length - 1
+        }
+
+        let matchEnd = selEnd
+        if (selectionIsTerm) {
+            matchEnd = selEnd
+        } else if (selStart === selEnd && selEnd + term.length <= haystack.length
+                   && haystack.slice(selEnd, selEnd + term.length) === term) {
+            matchEnd = selEnd + term.length
+        }
+        return matchEnd
+    }
+
     function findNext(term, backward) {
         if (!term || term.length === 0) {
             return false
         }
-        const haystack = root.document.text
-        const from = backward
-            ? (editor.selectionStart > 0 ? editor.selectionStart - 1 : haystack.length - 1)
-            : editor.selectionEnd
-        const idx = backward
+        const haystack = editor.text
+        const from = findSearchAnchor(term, backward)
+        let idx = backward
             ? haystack.lastIndexOf(term, from)
             : haystack.indexOf(term, from)
         if (idx < 0) {
+            idx = backward
+                ? haystack.lastIndexOf(term)
+                : haystack.indexOf(term, 0)
+        }
+        if (idx < 0) {
             return false
         }
-        editor.textEdit.select(idx, idx + term.length)
-        editor.textEdit.forceActiveFocus()
+        editor.select(idx, idx + term.length)
+        Qt.callLater(() => editor.ensureRangeVisible(idx, idx + term.length))
+        editor.forceActiveFocus()
         return true
     }
 

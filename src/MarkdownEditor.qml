@@ -133,6 +133,40 @@ Item {
         flickable.contentY = Math.max(0, Math.min(targetY, maxY))
     }
 
+    function ensureRangeVisible(start, end) {
+        const flickable = root.scrollFlickable
+        if (!flickable) {
+            return
+        }
+
+        const len = textArea.text.length
+        const startPos = Math.max(0, Math.min(start, len))
+        const endPos = Math.max(startPos, Math.min(end, len))
+        const startRect = textArea.positionToRectangle(startPos)
+        const endRect = textArea.positionToRectangle(endPos > startPos ? endPos - 1 : startPos)
+
+        const tp = textArea.topPadding
+        const bp = textArea.bottomPadding
+        const margin = Math.max(6, fontMetrics.height * 0.2)
+        const viewTop = flickable.contentY + tp
+        const viewBottom = flickable.contentY + flickable.height - bp
+
+        let top = Math.min(startRect.y, endRect.y)
+        let bottom = Math.max(startRect.y + startRect.height, endRect.y + endRect.height)
+        let targetY = flickable.contentY
+
+        if (bottom + margin > viewBottom) {
+            targetY = bottom - flickable.height + bp + margin
+        } else if (top - margin < viewTop) {
+            targetY = top - tp - margin
+        } else {
+            return
+        }
+
+        const maxY = Math.max(0, flickable.contentHeight - flickable.height)
+        flickable.contentY = Math.max(0, Math.min(targetY, maxY))
+    }
+
     function scheduleCurrentLineHighlightUpdate() {
         lineHighlightTimer.restart()
     }
