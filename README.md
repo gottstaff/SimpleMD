@@ -72,7 +72,28 @@ flatpak remote-add --user --if-not-exists --no-gpg-verify simplemd \
 flatpak install --user simplemd io.github.gottstaff.SimpleMD
 ```
 
-Launch from the application menu or with `flatpak run io.github.gottstaff.SimpleMD`. Update with `flatpak update --user io.github.gottstaff.SimpleMD`.
+Launch from the application menu or with `flatpak run io.github.gottstaff.SimpleMD`.
+
+## Update
+
+### Manjaro / Arch
+
+Pull the latest changes in your local checkout, then run the install script again:
+
+```bash
+git pull
+./scripts/install-manjaro.sh
+```
+
+### Flatpak
+
+Update the app (and related runtimes from Flathub) with:
+
+```bash
+flatpak update --user io.github.gottstaff.SimpleMD
+```
+
+If you installed it system-wide instead of with `--user`, omit `--user`.
 
 ## Uninstall
 
