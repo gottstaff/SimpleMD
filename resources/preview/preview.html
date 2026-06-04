@@ -619,6 +619,8 @@
       }
       document.documentElement.style.removeProperty('--bg');
       document.documentElement.style.removeProperty('--text');
+      document.documentElement.style.removeProperty('--link');
+      document.documentElement.style.removeProperty('--code-bg');
       document.body.style.removeProperty('background');
     }
 
@@ -659,6 +661,20 @@
       }
     }
 
+    function exportThemeValue(theme, key, fallback) {
+      if (theme && theme[key]) {
+        return theme[key];
+      }
+      return fallback;
+    }
+
+    function exportBorderStyle(color) {
+      if (!color || color === 'transparent' || color === 'none') {
+        return 'none';
+      }
+      return '1px solid ' + color;
+    }
+
     function prepareForExport(options) {
       prepareForPrint();
       clearExportLayout();
@@ -669,10 +685,33 @@
       const pageNumbers = opts.pageNumbers === true;
       const title = (opts.title || '').replace(/\s*\[\*\]\s*$/, '').trim();
       const layout = opts.layout || 'document';
+      const theme = opts.themeData || {};
 
-      document.documentElement.style.setProperty('--bg', '#ffffff');
-      document.documentElement.style.setProperty('--text', '#1a1a1a');
-      document.body.style.background = '#ffffff';
+      const background = exportThemeValue(theme, 'background', '#ffffff');
+      const text = exportThemeValue(theme, 'text', '#1a1a1a');
+      const link = exportThemeValue(theme, 'link', '#2980b9');
+      const fontFamily = exportThemeValue(theme, 'fontFamily', 'Georgia, "Times New Roman", serif');
+      const codeFontFamily = exportThemeValue(theme, 'codeFontFamily', 'ui-monospace, monospace');
+      const codeBackground = exportThemeValue(theme, 'codeBackground', 'rgba(0, 0, 0, 0.06)');
+      const titleFontFamily = exportThemeValue(theme, 'titleFontFamily', fontFamily);
+      const titleFontSize = exportThemeValue(theme, 'titleFontSize', '8.5pt');
+      const titleColor = exportThemeValue(theme, 'titleColor', '#888888');
+      const titleBorderColor = exportThemeValue(theme, 'titleBorderColor', 'rgba(0, 0, 0, 0.08)');
+      const headingBorderColor = exportThemeValue(theme, 'headingBorderColor', 'rgba(0, 0, 0, 0.12)');
+      const blockquoteBorderColor = exportThemeValue(theme, 'blockquoteBorderColor', 'rgba(0, 0, 0, 0.18)');
+      const blockquoteColor = exportThemeValue(theme, 'blockquoteColor', '#333333');
+      const tableBorderColor = exportThemeValue(theme, 'tableBorderColor', 'rgba(0, 0, 0, 0.15)');
+      const footnotesBorderColor = exportThemeValue(theme, 'footnotesBorderColor', 'rgba(0, 0, 0, 0.12)');
+      const pageNumberColor = exportThemeValue(theme, 'pageNumberColor', '#666666');
+      const pageNumberFontFamily = exportThemeValue(theme, 'pageNumberFontFamily', fontFamily);
+      const pageNumberFontSize = exportThemeValue(theme, 'pageNumberFontSize', '9pt');
+      const h1Border = exportBorderStyle(headingBorderColor);
+
+      document.documentElement.style.setProperty('--bg', background);
+      document.documentElement.style.setProperty('--text', text);
+      document.documentElement.style.setProperty('--link', link);
+      document.documentElement.style.setProperty('--code-bg', codeBackground);
+      document.body.style.background = background;
 
       const content = document.getElementById('content');
       if (title.length > 0 && layout === 'document') {
@@ -689,9 +728,9 @@
         pageFooterCss = `
       @bottom-center {
         content: counter(page);
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 9pt;
-        color: #666;
+        font-family: ${pageNumberFontFamily};
+        font-size: ${pageNumberFontSize};
+        color: ${pageNumberColor};
       }`;
       }
 
@@ -701,13 +740,14 @@
     @page {
       margin: ${margins.top}mm ${margins.right}mm ${bottomMargin}mm ${margins.left}mm;
       size: auto;
-      background: #fff;
+      background: ${background};
       ${pageFooterCss}
     }
     @media print {
       html, body {
-        background: #fff !important;
-        color: #1a1a1a !important;
+        background: ${background} !important;
+        color: ${text} !important;
+        font-family: ${fontFamily} !important;
         font-size: ${typo.fontSize} !important;
         line-height: ${typo.lineHeight} !important;
         margin: 0 !important;
@@ -716,7 +756,9 @@
         print-color-adjust: exact;
       }
       #content {
-        background: #fff !important;
+        background: ${background} !important;
+        color: ${text} !important;
+        font-family: ${fontFamily} !important;
         max-width: ${typo.maxWidth} !important;
         margin-left: ${typo.maxWidth !== 'none' ? 'auto' : '0'} !important;
         margin-right: ${typo.maxWidth !== 'none' ? 'auto' : '0'} !important;
@@ -724,12 +766,12 @@
         box-sizing: border-box !important;
       }
       #export-title {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: 8.5pt;
-        color: #888;
+        font-family: ${titleFontFamily};
+        font-size: ${titleFontSize};
+        color: ${titleColor};
         margin: 0 0 1.25em 0;
         padding: 0 0 0.5em 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        border-bottom: ${exportBorderStyle(titleBorderColor)};
       }
       #content .md-block {
         break-inside: auto !important;
@@ -738,6 +780,14 @@
       #content pre {
         break-inside: auto !important;
         page-break-inside: auto !important;
+        background: ${codeBackground} !important;
+        font-family: ${codeFontFamily} !important;
+      }
+      #content code {
+        font-family: ${codeFontFamily} !important;
+      }
+      #content a {
+        color: ${link} !important;
       }
       #content h1, #content h2, #content h3 {
         break-after: avoid-page;
@@ -750,7 +800,7 @@
       #content h1 {
         font-size: calc(1.65em * ${typo.headingScale});
         margin-top: 0.4em;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+        border-bottom: ${h1Border};
         padding-bottom: 0.25em;
       }
       #content h2 {
@@ -765,9 +815,15 @@
         widows: 3;
       }
       #content blockquote {
-        border-left: 3px solid rgba(0, 0, 0, 0.18);
+        border-left: 3px solid ${blockquoteBorderColor};
         padding-left: 1em;
-        color: #333;
+        color: ${blockquoteColor};
+      }
+      #content th, #content td {
+        border-color: ${tableBorderColor} !important;
+      }
+      #content .footnotes {
+        border-top-color: ${footnotesBorderColor} !important;
       }
     }`;
       document.head.appendChild(style);

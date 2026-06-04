@@ -42,6 +42,8 @@ add_subdirectory(src)
 
 install(PROGRAMS io.github.gottstaff.SimpleMD.desktop DESTINATION ${KDE_INSTALL_APPDIR})
 
+install(FILES simplemd.xml DESTINATION ${KDE_INSTALL_MIMEDIR})
+
 ecm_install_icons(
     ICONS
         icons/16-apps-io.github.gottstaff.SimpleMD.png

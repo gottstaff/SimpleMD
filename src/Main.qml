@@ -18,10 +18,42 @@ Kirigami.ApplicationWindow {
     property bool windowWasMinimized: false
     property bool restoringWindow: false
 
+    Timer {
+        id: restoreFullscreenTimer
+        interval: 120
+        repeat: false
+        onTriggered: root.restoreExpandedWindow()
+    }
+
     Component.onCompleted: {
         editorHelper.installFileDrop(root)
         if (wantExpanded) {
             showFullScreen()
+        }
+        openExternalPaths(appIntegration.pendingFiles)
+    }
+
+    function focusWindow() {
+        raise()
+        requestActivate()
+    }
+
+    function openExternalPaths(paths) {
+        if (!paths || paths.length === 0) {
+            return
+        }
+        focusWindow()
+        document.openRecent(paths[0])
+    }
+
+    Connections {
+        target: appIntegration
+
+        function onOpenFilesRequested(paths) {
+            focusWindow()
+            if (paths.length > 0) {
+                document.openRecent(paths[0])
+            }
         }
     }
 
@@ -42,6 +74,7 @@ Kirigami.ApplicationWindow {
 
     onVisibilityChanged: function(visibility) {
         if (visibility === Window.Minimized) {
+            restoreFullscreenTimer.stop()
             windowWasMinimized = true
             editorPane.onWindowMinimized()
             return
@@ -51,7 +84,9 @@ Kirigami.ApplicationWindow {
             editorPane.onWindowRestored()
         }
         if (wantExpanded && visibility !== Window.FullScreen) {
-            restoreExpandedWindow()
+            // Full-screen exit precedes minimize on many WMs; defer restore so
+            // showMinimized() can finish instead of snapping back to full screen.
+            restoreFullscreenTimer.restart()
         }
     }
 
@@ -116,6 +151,7 @@ Kirigami.ApplicationWindow {
         property string aiSystemPrompt: defaultAiSystemPrompt
 
         property string pdfLayoutPreset: "document"
+        property string pdfTheme: "classic"
         property string pdfPageSize: "A4"
         property string pdfOrientation: "portrait"
         property string pdfMargins: "normal"
@@ -142,6 +178,7 @@ Kirigami.ApplicationWindow {
         property alias aiMaxTokens: preferences.aiMaxTokens
         property alias aiSystemPrompt: preferences.aiSystemPrompt
         property alias pdfLayoutPreset: preferences.pdfLayoutPreset
+        property alias pdfTheme: preferences.pdfTheme
         property alias pdfPageSize: preferences.pdfPageSize
         property alias pdfOrientation: preferences.pdfOrientation
         property alias pdfMargins: preferences.pdfMargins
@@ -164,6 +201,10 @@ Kirigami.ApplicationWindow {
 
     EditorHelper {
         id: editorHelper
+    }
+
+    PdfExportThemes {
+        id: pdfExportThemes
     }
 
     Connections {
@@ -922,12 +963,15 @@ Kirigami.ApplicationWindow {
                         return
                     }
                     preferences.pdfLayoutPreset = exportLayoutCombo.currentValue
+                    preferences.pdfTheme = exportThemeCombo.currentValue
                     preferences.pdfPageSize = exportPageSizeCombo.currentValue
                     preferences.pdfOrientation = exportOrientationCombo.currentValue
                     preferences.pdfMargins = exportMarginsCombo.currentValue
                     preferences.pdfPageNumbers = exportPageNumbersSwitch.checked
                     editorPane.exportDocument(path, {
                         layout: exportLayoutCombo.currentValue,
+                        theme: exportThemeCombo.currentValue,
+                        themeData: pdfExportThemes.themeData(exportThemeCombo.currentValue),
                         pageSize: exportPageSizeCombo.currentValue,
                         orientation: exportOrientationCombo.currentValue,
                         margins: exportMarginsCombo.currentValue,
@@ -966,6 +1010,15 @@ Kirigami.ApplicationWindow {
                     textRole: "text"
                     valueRole: "value"
                     onActivated: pdfExportDialog.applyLayoutPreset(currentValue)
+                }
+
+                Controls.Label { text: i18nc("@label", "Theme") }
+                Controls.ComboBox {
+                    id: exportThemeCombo
+                    Layout.fillWidth: true
+                    model: pdfExportThemes.themes
+                    textRole: "text"
+                    valueRole: "value"
                 }
 
                 Controls.Label { text: i18nc("@label", "Page size") }
@@ -1019,10 +1072,28 @@ Kirigami.ApplicationWindow {
                     id: exportPageNumbersSwitch
                 }
             }
+
+            Controls.Label {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                opacity: 0.55
+                font.pointSize: Kirigami.Theme.smallFont.pointSize
+                text: i18nc("@info", "Themes can be customized in %1", pdfExportThemes.configFilePath)
+            }
+        }
+
+        function themeIndexForId(themeId) {
+            const idx = exportThemeCombo.indexOfValue(themeId)
+            if (idx >= 0) {
+                return idx
+            }
+            const defaultIdx = exportThemeCombo.indexOfValue(pdfExportThemes.defaultThemeId)
+            return defaultIdx >= 0 ? defaultIdx : 0
         }
 
         function syncFromPreferences() {
             exportLayoutCombo.currentIndex = Math.max(0, exportLayoutCombo.indexOfValue(preferences.pdfLayoutPreset))
+            exportThemeCombo.currentIndex = themeIndexForId(preferences.pdfTheme)
             exportPageSizeCombo.currentIndex = Math.max(0, exportPageSizeCombo.indexOfValue(preferences.pdfPageSize))
             exportOrientationCombo.currentIndex = Math.max(0, exportOrientationCombo.indexOfValue(preferences.pdfOrientation))
             exportMarginsCombo.currentIndex = Math.max(0, exportMarginsCombo.indexOfValue(preferences.pdfMargins))
@@ -1046,7 +1117,10 @@ Kirigami.ApplicationWindow {
             }
         }
 
-        onOpened: syncFromPreferences()
+        onOpened: {
+            pdfExportThemes.reload()
+            syncFromPreferences()
+        }
     }
 
     Controls.Dialog {
