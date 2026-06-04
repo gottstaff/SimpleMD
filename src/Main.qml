@@ -31,6 +31,7 @@ Kirigami.ApplicationWindow {
             showFullScreen()
         }
         openExternalPaths(appIntegration.pendingFiles)
+        credentialStore.loadApiKey()
     }
 
     function focusWindow() {
@@ -143,7 +144,6 @@ Kirigami.ApplicationWindow {
         property real previewLineHeight: 1.55
 
         property string aiApiBaseUrl: "https://api.openai.com/v1"
-        property string aiApiKey: ""
         property string aiModel: "gpt-4o-mini"
         property real aiTemperature: 0.4
         property int aiMaxTokens: 700
@@ -172,7 +172,6 @@ Kirigami.ApplicationWindow {
         property alias previewFontSize: preferences.previewFontSize
         property alias previewLineHeight: preferences.previewLineHeight
         property alias aiApiBaseUrl: preferences.aiApiBaseUrl
-        property alias aiApiKey: preferences.aiApiKey
         property alias aiModel: preferences.aiModel
         property alias aiTemperature: preferences.aiTemperature
         property alias aiMaxTokens: preferences.aiMaxTokens
@@ -189,10 +188,14 @@ Kirigami.ApplicationWindow {
         property alias authorName: preferences.authorName
     }
 
+    CredentialStore {
+        id: credentialStore
+    }
+
     LlmClient {
         id: llmClient
         apiBaseUrl: preferences.aiApiBaseUrl
-        apiKey: preferences.aiApiKey
+        apiKey: credentialStore.apiKey
         model: preferences.aiModel
         temperature: preferences.aiTemperature
         maxTokens: preferences.aiMaxTokens
@@ -1279,12 +1282,35 @@ Kirigami.ApplicationWindow {
                 }
 
                 Controls.Label { text: i18nc("@label", "API key") }
-                Controls.TextField {
+                ColumnLayout {
                     Layout.fillWidth: true
-                    text: preferences.aiApiKey
-                    echoMode: TextInput.Password
-                    placeholderText: "sk-..."
-                    onEditingFinished: preferences.aiApiKey = text.trim()
+                    spacing: Kirigami.Units.smallSpacing
+
+                    Controls.TextField {
+                        id: apiKeyField
+                        Layout.fillWidth: true
+                        text: credentialStore.apiKey
+                        echoMode: TextInput.Password
+                        placeholderText: "sk-..."
+                        onEditingFinished: credentialStore.saveApiKey(text.trim())
+                    }
+
+                    Controls.Label {
+                        Layout.fillWidth: true
+                        wrapMode: Text.WordWrap
+                        opacity: 0.65
+                        font.pointSize: Kirigami.Theme.smallFont.pointSize
+                        visible: credentialStore.loaded && credentialStore.storageMode.length > 0
+                        text: {
+                            if (credentialStore.storageMode === "keyring") {
+                                return i18nc("@info", "Stored in system keyring")
+                            }
+                            if (credentialStore.storageMode === "session") {
+                                return i18nc("@info", "Keyring unavailable — key kept for this session only")
+                            }
+                            return ""
+                        }
+                    }
                 }
 
                 Controls.Label { text: i18nc("@label", "Model") }

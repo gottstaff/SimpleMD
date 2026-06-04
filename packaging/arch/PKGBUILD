@@ -15,6 +15,7 @@ depends=(
   'kcoreaddons'
   'qqc2-desktop-style'
   'kiconthemes'
+  'qtkeychain-qt6'
 )
 makedepends=(
   'cmake'

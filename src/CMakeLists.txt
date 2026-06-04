@@ -27,6 +27,8 @@ target_sources(simplemd
         pdfexportthemes.h
         appintegration.cpp
         appintegration.h
+        credentialstore.cpp
+        credentialstore.h
 )
 
 get_filename_component(PREVIEW_RES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources/preview" ABSOLUTE)
@@ -87,6 +89,7 @@ target_link_libraries(simplemd
         Qt6::Pdf
         Qt6::WebEngineQuick
         Qt6::WebChannel
+        Qt6Keychain::Qt6Keychain
         KF6::I18n
         KF6::CoreAddons
         KF6::IconThemes

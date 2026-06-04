@@ -24,6 +24,7 @@ deps=(
   kcoreaddons
   qqc2-desktop-style
   kiconthemes
+  qtkeychain-qt6
 )
 
 echo "==> SimpleMD — Manjaro / Arch install"

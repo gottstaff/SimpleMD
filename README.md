@@ -47,9 +47,9 @@ Configure **API base URL**, **Model**, and related options in **Settings → Pre
 
 **Privacy:** each request sends your instruction plus either the current selection or ~1,200 characters of context around the cursor or the selected text to the configured server. **With an external provider, that content leaves your machine**.
 
-**Security:** the API key is stored in Qt settings on disk **in plain text** (not encrypted yet).
+**Security:** the API key is stored in the system keyring (KWallet or Secret Service) when available. If no keyring is accessible, the key is kept in memory for the current session only.
 
-AI is optional. Without it, the editor runs normally (offline aside from WebEngine’s usual needs).
+AI is optional. Without it, the editor runs normally.
 
 ## Install
 

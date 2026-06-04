@@ -28,6 +28,8 @@ find_package(Qt6 REQUIRED COMPONENTS
     WebChannel
 )
 
+find_package(Qt6Keychain REQUIRED)
+
 find_package(KF6 REQUIRED COMPONENTS
     Kirigami
     I18n
