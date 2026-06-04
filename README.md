@@ -32,7 +32,7 @@ On Manjaro / Arch, use the install script below. On other Linux systems with Fla
 
 One dialog, direct apply. No chat panel, presets, streaming, or diff review.
 
-Rewrite a paragraph, translate a sentence, insert an equation or a chemical compound in $\LaTeX$, create tables, …
+Rewrite a paragraph, translate a sentence, insert an equation or a chemical compound in LaTeX, create tables, …
 
 ![AI edit demo](docs/ai-demo.gif)
 
