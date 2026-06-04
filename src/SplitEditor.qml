@@ -270,9 +270,17 @@ Item {
         onTriggered: finishOutput()
     }
 
+    function exportBackgroundColor() {
+        const themeData = root.exportOptions.themeData
+        if (themeData && themeData.background) {
+            return themeData.background
+        }
+        return "#ffffff"
+    }
+
     function finishOutput() {
         if (root.outputMode === "export" && root.exportPath.length > 0) {
-            previewWeb.backgroundColor = "white"
+            previewWeb.backgroundColor = exportBackgroundColor()
             const opts = root.exportOptions
             previewWeb.printToPdf(
                 root.exportPath,
@@ -321,7 +329,7 @@ Item {
         root.pendingOutput = true
 
         if (mode === "export") {
-            previewWeb.backgroundColor = "white"
+            previewWeb.backgroundColor = exportBackgroundColor()
         }
 
         if (root.previewShowingLink) {

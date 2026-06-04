@@ -73,7 +73,10 @@ if [[ -z "${pkg}" || ! -f "${pkg}" ]]; then
 fi
 
 echo "==> Installing ${pkg}…"
-sudo pacman -U --noconfirm "${pkg}"
+# Icons may exist from a prior cmake --install without pacman ownership.
+sudo pacman -U --noconfirm \
+  --overwrite 'usr/share/icons/hicolor/*/apps/io.github.gottstaff.SimpleMD.*' \
+  "${pkg}"
 
 echo
 echo "Done. Launch with: simplemd"

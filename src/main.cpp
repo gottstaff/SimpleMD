@@ -7,9 +7,11 @@
 #include <QtWebEngineQuick/qtwebenginequickglobal.h>
 #include <cstdlib>
 
+#include "appintegration.h"
 #include "documentcontroller.h"
 #include "editorhelper.h"
 #include "previewhelper.h"
+#include "pdfexportthemes.h"
 #include "printhelper.h"
 #include "llmclient.h"
 #include <QUrl>
@@ -28,6 +30,21 @@ int main(int argc, char *argv[])
     QtWebEngineQuick::initialize();
 
     QApplication app(argc, argv);
+
+    const QStringList arguments = app.arguments();
+    if (AppIntegration::wantsHelp(arguments)) {
+        AppIntegration::printHelp();
+        return 0;
+    }
+
+    const QStringList initialFiles = AppIntegration::collectFilePaths(arguments.mid(1));
+    AppIntegration appIntegration;
+    const QString instanceKey = QStringLiteral("io.github.gottstaff.SimpleMD");
+    if (!appIntegration.ensurePrimaryInstance(instanceKey)) {
+        appIntegration.sendToRunningInstance(instanceKey, initialFiles);
+        return 0;
+    }
+    appIntegration.setPendingFiles(initialFiles);
 
     KLocalizedString::setApplicationDomain("simplemd");
     QApplication::setOrganizationName(QStringLiteral("KDE"));
@@ -50,10 +67,12 @@ int main(int argc, char *argv[])
     qmlRegisterType<LlmClient>("io.github.gottstaff.SimpleMD", 1, 0, "LlmClient");
     qmlRegisterType<PreviewHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PreviewHelper");
     qmlRegisterType<PrintHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PrintHelper");
+    qmlRegisterType<PdfExportThemes>("io.github.gottstaff.SimpleMD", 1, 0, "PdfExportThemes");
     qmlRegisterType<EditorHelper>("io.github.gottstaff.SimpleMD", 1, 0, "EditorHelper");
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextObject(new KLocalizedContext(&engine));
+    engine.rootContext()->setContextProperty(QStringLiteral("appIntegration"), &appIntegration);
     engine.loadFromModule(QStringLiteral("io.github.gottstaff.SimpleMD"), QStringLiteral("Main"));
 
     if (engine.rootObjects().isEmpty()) {

@@ -23,6 +23,10 @@ target_sources(simplemd
         previewhelper.h
         printhelper.cpp
         printhelper.h
+        pdfexportthemes.cpp
+        pdfexportthemes.h
+        appintegration.cpp
+        appintegration.h
 )
 
 get_filename_component(PREVIEW_RES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../resources/preview" ABSOLUTE)
@@ -36,6 +40,14 @@ set_source_files_properties("${_app_icon_png}" PROPERTIES QT_RESOURCE_ALIAS "io.
 qt_add_resources(simplemd "app_icons"
     PREFIX "/icons"
     FILES "${_app_icon_png}"
+)
+
+get_filename_component(PDF_THEMES_FILE "${CMAKE_CURRENT_SOURCE_DIR}/../resources/pdf-themes.json" ABSOLUTE)
+set_source_files_properties("${PDF_THEMES_FILE}" PROPERTIES QT_RESOURCE_ALIAS "pdf-themes.json")
+
+qt_add_resources(simplemd "pdf_themes"
+    PREFIX "/"
+    FILES "${PDF_THEMES_FILE}"
 )
 
 qt_add_resources(simplemd "preview_assets"

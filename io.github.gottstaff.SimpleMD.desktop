@@ -1,10 +1,14 @@
-#!/usr/bin/env xdg-open
 [Desktop Entry]
 Name=SimpleMD
 Comment=Minimal markdown editor with live preview
-Exec=simplemd
+GenericName=Markdown Editor
+Exec=simplemd %F
 Icon=io.github.gottstaff.SimpleMD
 Type=Application
 Terminal=false
 Categories=Utility;TextEditor;
+Keywords=markdown;md;editor;preview;note;
+MimeType=text/markdown;text/x-markdown;
 StartupWMClass=io.github.gottstaff.SimpleMD
+StartupNotify=true
+SingleMainWindow=true
