@@ -12,6 +12,7 @@
 #include "documentcontroller.h"
 #include "editorhelper.h"
 #include "previewhelper.h"
+#include "previewimagebridge.h"
 #include "pdfexportthemes.h"
 #include "printhelper.h"
 #include "llmclient.h"
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<DocumentController>("io.github.gottstaff.SimpleMD", 1, 0, "DocumentController");
     qmlRegisterType<LlmClient>("io.github.gottstaff.SimpleMD", 1, 0, "LlmClient");
     qmlRegisterType<PreviewHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PreviewHelper");
+    qmlRegisterType<PreviewImageBridge>("io.github.gottstaff.SimpleMD", 1, 0, "PreviewImageBridge");
     qmlRegisterType<PrintHelper>("io.github.gottstaff.SimpleMD", 1, 0, "PrintHelper");
     qmlRegisterType<PdfExportThemes>("io.github.gottstaff.SimpleMD", 1, 0, "PdfExportThemes");
     qmlRegisterType<CredentialStore>("io.github.gottstaff.SimpleMD", 1, 0, "CredentialStore");

@@ -3,75 +3,46 @@
 #include "imageresolver.h"
 
 #include <QDir>
-#include <QFile>
 #include <QFileInfo>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QMimeDatabase>
 #include <QUrl>
+
+#include <algorithm>
 
 namespace
 {
-constexpr qint64 kMaxEmbeddedImageBytes = 12 * 1024 * 1024;
-
-QString toDataUrl(const QString &absolutePath)
+QString preparePreviewMarkdown(const QString &markdown,
+                               const QString &documentDirectory,
+                               const QString &stagingDirectory,
+                               QJsonObject *imagePaths)
 {
-    const QFileInfo info(absolutePath);
-    if (!info.exists() || !info.isFile() || info.size() > kMaxEmbeddedImageBytes) {
-        return {};
-    }
-
-    QFile file(absolutePath);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return {};
-    }
-
-    const QMimeDatabase mimeDb;
-    QString mime = mimeDb.mimeTypeForFile(absolutePath).name();
-    if (!mime.startsWith(QLatin1String("image/"))) {
-        const QString suffix = info.suffix().toLower();
-        if (suffix == QLatin1String("svg")) {
-            mime = QStringLiteral("image/svg+xml");
-        } else if (suffix == QLatin1String("jpg") || suffix == QLatin1String("jpeg")) {
-            mime = QStringLiteral("image/jpeg");
-        } else if (suffix == QLatin1String("png")) {
-            mime = QStringLiteral("image/png");
-        } else if (suffix == QLatin1String("gif")) {
-            mime = QStringLiteral("image/gif");
-        } else if (suffix == QLatin1String("webp")) {
-            mime = QStringLiteral("image/webp");
-        } else {
-            return {};
-        }
-    }
-
-    const QByteArray encoded = file.readAll().toBase64();
-    if (encoded.isEmpty()) {
-        return {};
-    }
-
-    return QStringLiteral("data:") + mime + QStringLiteral(";base64,")
-        + QString::fromLatin1(encoded);
-}
-
-QString embedLocalImages(QString markdown, const QString &documentDirectory)
-{
-    if (markdown.isEmpty()) {
+    if (markdown.isEmpty() || imagePaths == nullptr) {
         return markdown;
     }
 
-    const QVector<ImageReference> references = ImageResolver::collectImageReferences(markdown);
+    QVector<ImageReference> references = ImageResolver::collectImageReferences(markdown);
+    std::sort(references.begin(), references.end(), [](const ImageReference &a, const ImageReference &b) {
+        return a.start > b.start;
+    });
+
+    int imageId = 0;
+    QString updated = markdown;
     for (const ImageReference &ref : references) {
-        const QString absolutePath = ImageResolver::resolveImagePath(ref.rawRef, documentDirectory);
-        const QString dataUrl = absolutePath.isEmpty() ? QString() : toDataUrl(absolutePath);
-        if (dataUrl.isEmpty()) {
+        const QString absolutePath = ImageResolver::resolveReadableImagePath(
+            ref.rawRef, documentDirectory, stagingDirectory);
+        if (absolutePath.isEmpty()) {
             continue;
         }
 
-        markdown = ImageResolver::rewriteImageReference(markdown, ref, dataUrl);
+        const QString anchor = QStringLiteral("#preview-local-image-") + QString::number(imageId);
+        imagePaths->insert(QString::number(imageId), absolutePath);
+        updated = ImageResolver::rewriteImageReference(updated, ref, anchor);
+        ++imageId;
     }
 
-    return markdown;
+    return updated;
 }
 }
 
@@ -90,6 +61,7 @@ QString PreviewHelper::buildPreviewScript(const QString &markdown,
                                             int padPx,
                                             int maxWidthEm,
                                             const QString &documentDirectory,
+                                            const QString &stagingDirectory,
                                             const QString &scrollbarThumb,
                                             const QString &scrollbarTrack,
                                             const QString &scrollbarThumbHover,
@@ -130,12 +102,15 @@ QString PreviewHelper::buildPreviewScript(const QString &markdown,
         }
     }
 
-    const QString previewMarkdown = embedLocalImages(markdown, documentDirectory);
+    QJsonObject imagePaths;
+    const QString previewMarkdown = preparePreviewMarkdown(
+        markdown, documentDirectory, stagingDirectory, &imagePaths);
 
     const QJsonObject payload {
         {QStringLiteral("markdown"), previewMarkdown},
         {QStringLiteral("theme"), theme},
         {QStringLiteral("documentBaseUrl"), documentBaseUrl},
+        {QStringLiteral("imagePaths"), imagePaths},
     };
 
     const QByteArray json = QJsonDocument(payload).toJson(QJsonDocument::Compact);

@@ -357,7 +357,7 @@
         return src;
       }
       const trimmed = src.trim();
-      if (/^(https?:|data:|file:|qrc:|#|mailto:)/i.test(trimmed)) {
+      if (/^(https?:|data:|file:|qrc:|simplemd:|#|mailto:)/i.test(trimmed)) {
         return trimmed;
       }
       if (/^\/[^/]/.test(trimmed)) {
@@ -468,7 +468,11 @@
 
     function fixLocalAssets(el) {
       el.querySelectorAll('img[src]').forEach(img => {
-        img.src = resolveAssetUrl(img.getAttribute('src'));
+        const src = img.getAttribute('src');
+        if (src && src.startsWith('#preview-local-image-')) {
+          return;
+        }
+        img.src = resolveAssetUrl(src);
       });
       el.querySelectorAll('a[href]').forEach(link => {
         const href = link.getAttribute('href');
@@ -476,6 +480,42 @@
           link.href = resolveAssetUrl(href);
         }
       });
+    }
+
+    function requestPreviewImage(path) {
+      return new Promise((resolve) => {
+        if (!window.previewImages
+            || typeof window.previewImages.loadImageAsDataUrl !== 'function') {
+          resolve('');
+          return;
+        }
+        window.previewImages.loadImageAsDataUrl(path, (dataUrl) => {
+          resolve(dataUrl || '');
+        });
+      });
+    }
+
+    async function embedPreviewImages(el, imagePaths) {
+      if (!imagePaths || typeof imagePaths !== 'object') {
+        return;
+      }
+
+      const tasks = Object.keys(imagePaths).map(async (id) => {
+        const path = imagePaths[id];
+        if (!path) {
+          return;
+        }
+        const img = el.querySelector('img[src="#preview-local-image-' + id + '"]');
+        if (!img) {
+          return;
+        }
+        const dataUrl = await requestPreviewImage(path);
+        if (dataUrl) {
+          img.src = dataUrl;
+        }
+      });
+
+      await Promise.all(tasks);
     }
 
     async function ensureMermaidReady() {
@@ -575,16 +615,22 @@
     function updatePreviewFromBase64(base64Text) {
       const jsonText = base64ToUtf8(base64Text);
       const payload = JSON.parse(jsonText);
-      updatePreview(payload.markdown, payload.theme, payload.documentBaseUrl || '');
+      updatePreview(
+        payload.markdown,
+        payload.theme,
+        payload.documentBaseUrl || '',
+        payload.imagePaths || {}
+      );
     }
 
-    async function updatePreview(markdown, theme, baseUrl) {
+    async function updatePreview(markdown, theme, baseUrl, imagePaths) {
       applyTheme(theme);
       documentBaseUrl = baseUrl || '';
       const el = document.getElementById('content');
       el.innerHTML = renderBlocksHtml(markdown);
       injectMath(el);
       fixLocalAssets(el);
+      await embedPreviewImages(el, imagePaths || {});
       await renderMermaid(el);
 
       const ensureLine = window._pendingEnsureLine || 0;
@@ -1110,6 +1156,7 @@
       }
       new QWebChannel(qt.webChannelTransport, (channel) => {
         window.scrollBridge = channel.objects.scrollBridge;
+        window.previewImages = channel.objects.previewImages;
         installPreviewScrollListener();
       });
     }

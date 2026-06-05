@@ -45,6 +45,7 @@ public:
     Q_INVOKABLE QString pickPdfExportFile();
     Q_INVOKABLE QString pickSaveFolder();
     Q_INVOKABLE QString documentDirectory() const;
+    Q_INVOKABLE QString stagingDirectory() const;
     Q_INVOKABLE QString markdownPath(const QString &absolutePath) const;
     Q_INVOKABLE QString suggestedSavePath() const;
 

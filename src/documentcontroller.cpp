@@ -144,6 +144,11 @@ QString DocumentController::documentDirectory() const
     return QFileInfo(m_filePath).absolutePath();
 }
 
+QString DocumentController::stagingDirectory() const
+{
+    return m_assets.stagingDirectory();
+}
+
 QString DocumentController::markdownPath(const QString &absolutePath) const
 {
     if (absolutePath.isEmpty()) {
@@ -155,12 +160,18 @@ QString DocumentController::markdownPath(const QString &absolutePath) const
         return absolutePath;
     }
 
+    const QString absoluteImagePath = imageInfo.absoluteFilePath();
+
     const QString docDir = documentDirectory();
     if (docDir.isEmpty()) {
-        return QString(imageInfo.absoluteFilePath()).replace(QLatin1Char('\\'), QLatin1Char('/'));
+        return QString(absoluteImagePath).replace(QLatin1Char('\\'), QLatin1Char('/'));
     }
 
-    const QString relative = QDir(docDir).relativeFilePath(imageInfo.absoluteFilePath());
+    if (!ImageResolver::isPathUnderDirectory(absoluteImagePath, docDir)) {
+        return QString(absoluteImagePath).replace(QLatin1Char('\\'), QLatin1Char('/'));
+    }
+
+    const QString relative = QDir(docDir).relativeFilePath(absoluteImagePath);
     return QString(relative).replace(QLatin1Char('\\'), QLatin1Char('/'));
 }
 

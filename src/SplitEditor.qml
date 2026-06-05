@@ -201,9 +201,14 @@ Item {
         }
     }
 
+    PreviewImageBridge {
+        id: previewImages
+        WebChannel.id: "previewImages"
+    }
+
     WebChannel {
         id: previewChannel
-        registeredObjects: [scrollBridge]
+        registeredObjects: [scrollBridge, previewImages]
     }
 
     function colorHex(c) {
@@ -422,6 +427,7 @@ Item {
             pad * 1.8,
             46,
             root.document.documentDirectory(),
+            root.document.stagingDirectory(),
             scrollbarThumbColor(),
             scrollbarTrackColor(),
             scrollbarThumbHoverColor(),

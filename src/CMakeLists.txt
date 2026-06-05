@@ -21,6 +21,8 @@ target_sources(simplemd
         llmclient.h
         previewhelper.cpp
         previewhelper.h
+        previewimagebridge.cpp
+        previewimagebridge.h
         printhelper.cpp
         printhelper.h
         pdfexportthemes.cpp

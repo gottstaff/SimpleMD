@@ -19,6 +19,7 @@ public:
                                            int padPx,
                                            int maxWidthEm,
                                            const QString &documentDirectory = QString(),
+                                           const QString &stagingDirectory = QString(),
                                            const QString &scrollbarThumb = QString(),
                                            const QString &scrollbarTrack = QString(),
                                            const QString &scrollbarThumbHover = QString(),

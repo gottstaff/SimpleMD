@@ -18,8 +18,12 @@ struct ImageReference {
 
 namespace ImageResolver
 {
+QString normalizeImageTarget(const QString &reference);
 bool isRemoteOrEmbeddedReference(const QString &reference);
 QString resolveImagePath(const QString &reference, const QString &documentDirectory);
+QString resolveReadableImagePath(const QString &reference,
+                                   const QString &documentDirectory,
+                                   const QString &alternateDirectory = QString());
 bool isLocalImageReference(const QString &reference);
 bool isPathUnderDirectory(const QString &absolutePath, const QString &directory);
 bool isExternalOrMissing(const QString &reference, const QString &documentDirectory);
