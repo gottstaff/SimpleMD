@@ -1075,14 +1075,6 @@ Kirigami.ApplicationWindow {
                     id: exportPageNumbersSwitch
                 }
             }
-
-            Controls.Label {
-                Layout.fillWidth: true
-                wrapMode: Text.WordWrap
-                opacity: 0.55
-                font.pointSize: Kirigami.Theme.smallFont.pointSize
-                text: i18nc("@info", "Themes can be customized in %1", pdfExportThemes.configFilePath)
-            }
         }
 
         function themeIndexForId(themeId) {
