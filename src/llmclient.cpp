@@ -113,14 +113,17 @@ QString LlmClient::lastError() const
 void LlmClient::requestEdit(const QString &instruction,
                             const QString &selectedText,
                             const QString &beforeCursor,
-                            const QString &afterCursor)
+                            const QString &afterCursor,
+                            const QString &apiKey)
 {
     if (m_busy) {
         setLastError(QStringLiteral("A request is already running."));
         Q_EMIT failed(m_lastError);
         return;
     }
-    if (m_apiKey.trimmed().isEmpty()) {
+
+    const QString authKey = apiKey.trimmed().isEmpty() ? m_apiKey.trimmed() : apiKey.trimmed();
+    if (authKey.isEmpty()) {
         setLastError(QStringLiteral("Missing API key. Set it in Preferences > AI."));
         Q_EMIT failed(m_lastError);
         return;
@@ -172,7 +175,7 @@ void LlmClient::requestEdit(const QString &instruction,
 
     QNetworkRequest req { QUrl(endpointUrl()) };
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
-    req.setRawHeader("Authorization", QByteArray("Bearer ") + m_apiKey.toUtf8());
+    req.setRawHeader("Authorization", QByteArray("Bearer ") + authKey.toUtf8());
 
     m_reply = m_network->post(req, QJsonDocument(payload).toJson(QJsonDocument::Compact));
     setBusy(true);

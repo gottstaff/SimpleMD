@@ -195,11 +195,22 @@ Kirigami.ApplicationWindow {
     LlmClient {
         id: llmClient
         apiBaseUrl: preferences.aiApiBaseUrl
-        apiKey: credentialStore.apiKey
         model: preferences.aiModel
         temperature: preferences.aiTemperature
         maxTokens: preferences.aiMaxTokens
         systemPrompt: preferences.aiSystemPrompt
+    }
+
+    Connections {
+        target: credentialStore
+
+        function onApiKeyChanged() {
+            llmClient.apiKey = credentialStore.apiKey
+        }
+
+        function onLoadFinished() {
+            llmClient.apiKey = credentialStore.apiKey
+        }
     }
 
     EditorHelper {
@@ -1142,6 +1153,14 @@ Kirigami.ApplicationWindow {
             radius: Kirigami.Units.cornerRadius
         }
 
+        onOpened: credentialStore.loadApiKey()
+
+        onClosed: {
+            if (apiKeyField.text.trim() !== credentialStore.apiKey) {
+                credentialStore.saveApiKey(apiKeyField.text.trim())
+            }
+        }
+
         contentItem: ColumnLayout {
             spacing: Kirigami.Units.mediumSpacing
 
@@ -1281,10 +1300,17 @@ Kirigami.ApplicationWindow {
                     Controls.TextField {
                         id: apiKeyField
                         Layout.fillWidth: true
-                        text: credentialStore.apiKey
                         echoMode: TextInput.Password
                         placeholderText: "sk-..."
                         onEditingFinished: credentialStore.saveApiKey(text.trim())
+                        onAccepted: credentialStore.saveApiKey(text.trim())
+                    }
+
+                    Binding {
+                        target: apiKeyField
+                        property: "text"
+                        value: credentialStore.apiKey
+                        when: !apiKeyField.activeFocus
                     }
 
                     Controls.Label {
@@ -1299,6 +1325,9 @@ Kirigami.ApplicationWindow {
                             }
                             if (credentialStore.storageMode === "session") {
                                 return i18nc("@info", "Keyring unavailable — key kept for this session only")
+                            }
+                            if (credentialStore.storageMode === "locked") {
+                                return i18nc("@info", "Unlock your wallet, then reopen Preferences to load the API key")
                             }
                             return ""
                         }
@@ -1431,6 +1460,12 @@ Kirigami.ApplicationWindow {
             radius: Kirigami.Units.cornerRadius
         }
 
+        onOpened: {
+            credentialStore.loadApiKey()
+            aiRequestField.forceActiveFocus()
+            aiRequestField.selectAll()
+        }
+
         footer: Controls.DialogButtonBox {
             alignment: Qt.AlignRight
 
@@ -1442,7 +1477,8 @@ Kirigami.ApplicationWindow {
                         aiRequestField.text,
                         editorPane.selectedTextForAi(),
                         editorPane.beforeCursorContext(1200),
-                        editorPane.afterCursorContext(1200)
+                        editorPane.afterCursorContext(1200),
+                        credentialStore.apiKey
                     )
                 }
             }
@@ -1475,11 +1511,6 @@ Kirigami.ApplicationWindow {
                 wrapMode: Text.WordWrap
                 text: llmClient.lastError
             }
-        }
-
-        onOpened: {
-            aiRequestField.forceActiveFocus()
-            aiRequestField.selectAll()
         }
     }
 

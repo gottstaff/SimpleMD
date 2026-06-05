@@ -46,7 +46,8 @@ public:
     Q_INVOKABLE void requestEdit(const QString &instruction,
                                  const QString &selectedText,
                                  const QString &beforeCursor,
-                                 const QString &afterCursor);
+                                 const QString &afterCursor,
+                                 const QString &apiKey = QString());
 
 Q_SIGNALS:
     void completed(const QString &text);

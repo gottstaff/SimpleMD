@@ -172,29 +172,45 @@ void CredentialStore::handleReadFinished(QKeychain::ReadPasswordJob *job)
         }
 
         if (error == QKeychain::EntryNotFound || keychainValue.isEmpty()) {
-            setApiKey({});
+            if (m_apiKey.isEmpty()) {
+                setApiKey({});
+                setStorageMode(QStringLiteral("keyring"));
+            } else {
+                setStorageMode(QStringLiteral("session"));
+            }
             setKeychainAvailable(true);
-            setStorageMode(QStringLiteral("keyring"));
             setLoaded(true);
             Q_EMIT loadFinished();
             return;
         }
     }
 
+    if (error == QKeychain::AccessDenied || error == QKeychain::AccessDeniedByUser) {
+        setKeychainAvailable(true);
+        setStorageMode(QStringLiteral("locked"));
+        setLoaded(true);
+        Q_EMIT loadFinished();
+        return;
+    }
+
     if (error == QKeychain::NoBackendAvailable) {
         const QString legacy = legacyApiKeyFromSettings();
-        setApiKey(legacy);
+        if (!legacy.isEmpty() || m_apiKey.isEmpty()) {
+            setApiKey(legacy);
+        }
         setKeychainAvailable(false);
-        setStorageMode(legacy.isEmpty() ? QStringLiteral("unavailable") : QStringLiteral("session"));
+        setStorageMode(m_apiKey.isEmpty() ? QStringLiteral("unavailable") : QStringLiteral("session"));
         setLoaded(true);
         Q_EMIT loadFinished();
         return;
     }
 
     const QString legacy = legacyApiKeyFromSettings();
-    setApiKey(legacy);
+    if (!legacy.isEmpty() || m_apiKey.isEmpty()) {
+        setApiKey(legacy);
+    }
     setKeychainAvailable(false);
-    setStorageMode(legacy.isEmpty() ? QStringLiteral("unavailable") : QStringLiteral("session"));
+    setStorageMode(m_apiKey.isEmpty() ? QStringLiteral("unavailable") : QStringLiteral("session"));
     setLoaded(true);
     Q_EMIT loadFinished();
 }
