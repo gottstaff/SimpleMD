@@ -19,8 +19,6 @@ Item {
     property alias selectByMouse: textArea.selectByMouse
     property alias leftPadding: textArea.leftPadding
     property alias rightPadding: textArea.rightPadding
-    property alias topPadding: textArea.topPadding
-    property alias bottomPadding: textArea.bottomPadding
     property alias selectionColor: textArea.selectionColor
     property alias selectedTextColor: textArea.selectedTextColor
     property alias cursorPosition: textArea.cursorPosition
@@ -35,6 +33,11 @@ Item {
     property bool showWhitespace: false
     property bool syntaxHighlighting: false
     property var scrollFlickable: null
+    property bool cursorScrollLock: false
+
+    readonly property real textLeadInset: Math.max(8, fontMetrics.ascent + 6)
+    readonly property real textTrailInset: Math.max(6, fontMetrics.descent + 4)
+    readonly property real lineSnapInset: Math.max(4, fontMetrics.height * 0.2)
 
     readonly property color syntaxHeadingColor: Qt.rgba(
         textArea.color.r, textArea.color.g, textArea.color.b, 0.9)
@@ -67,9 +70,10 @@ Item {
                 Kirigami.Theme.textColor.b,
                 0.07))
 
+    width: textArea.width
     implicitWidth: textArea.implicitWidth
-    implicitHeight: textArea.implicitHeight
-    height: textArea.height
+    implicitHeight: textLeadInset + textArea.implicitHeight + textTrailInset
+    height: textLeadInset + textArea.height + textTrailInset
 
     function undo() { textArea.undo() }
     function redo() { textArea.redo() }
@@ -107,30 +111,197 @@ Item {
         return lineStartForPosition(textArea.cursorPosition) === 0
     }
 
+    function contentYMax() {
+        const flickable = root.scrollFlickable
+        if (!flickable) {
+            return 0
+        }
+        return Math.max(0, flickable.contentHeight - flickable.height)
+    }
+
+    function resetViewportScroll() {
+        const flickable = root.scrollFlickable
+        if (!flickable) {
+            return
+        }
+        flickable.contentY = 0
+    }
+
+    function contentYForPosition(pos) {
+        return textLeadInset + textArea.positionToRectangle(pos).y
+    }
+
+    function rowBoundsAtContentY(contentY) {
+        if (textArea.text.length === 0) {
+            const h = fontMetrics.height
+            return { y: textLeadInset, height: h, bottom: textLeadInset + h }
+        }
+
+        const target = contentY
+        let lo = 0
+        let hi = textArea.text.length
+        while (lo < hi) {
+            const mid = Math.floor((lo + hi) / 2)
+            if (contentYForPosition(mid) < target) {
+                lo = mid + 1
+            } else {
+                hi = mid
+            }
+        }
+
+        const pos = Math.min(lo, textArea.text.length - 1)
+        const rect = textArea.positionToRectangle(pos)
+        const y = textLeadInset + rect.y
+        return { y: y, height: rect.height, bottom: y + rect.height }
+    }
+
+    function cursorLineBounds() {
+        const pos = textArea.cursorPosition
+        const lineStart = lineStartForPosition(pos)
+        const cursorRect = textArea.cursorRectangle
+        const startRect = textArea.positionToRectangle(lineStart)
+        const atCursor = textArea.positionToRectangle(pos)
+
+        let top = Math.min(startRect.y, cursorRect.y, atCursor.y)
+        let bottom = Math.max(
+            startRect.y + startRect.height,
+            cursorRect.y + cursorRect.height,
+            atCursor.y + atCursor.height)
+
+        const lineEnd = lineEndForPosition(lineStart)
+        if (lineEnd > lineStart) {
+            const endRect = textArea.positionToRectangle(lineEnd - 1)
+            top = Math.min(top, endRect.y)
+            bottom = Math.max(bottom, endRect.y + endRect.height)
+        }
+
+        return {
+            top: textLeadInset + top,
+            bottom: textLeadInset + bottom,
+            height: bottom - top
+        }
+    }
+
+    function rowSpansBoundary(boundaryY, row) {
+        return row.y < boundaryY - 0.5 && row.bottom > boundaryY + 0.5
+    }
+
+    function snapScrollToWholeLines() {
+        const flickable = root.scrollFlickable
+        if (!flickable || root.cursorScrollLock || textArea.activeFocus) {
+            return
+        }
+
+        const viewH = flickable.height
+        const inset = root.lineSnapInset
+        const maxY = contentYMax()
+        let y = Math.max(0, Math.min(flickable.contentY, maxY))
+
+        if (textArea.text.length === 0 || viewH < inset * 2 + 4) {
+            if (Math.abs(flickable.contentY - y) > 0.5) {
+                flickable.contentY = y
+            }
+            return
+        }
+
+        const topRowAtView = rowBoundsAtContentY(y + inset + 0.5)
+        if (topRowAtView.y <= textLeadInset + 1) {
+            flickable.contentY = 0
+            return
+        }
+
+        for (let pass = 0; pass < 6; ++pass) {
+            const topEdge = y + inset
+            const bottomEdge = y + viewH - inset
+            const topRow = rowBoundsAtContentY(topEdge + 0.5)
+            const bottomRow = rowBoundsAtContentY(Math.max(topEdge + 1, bottomEdge - 0.5))
+            const topPartial = rowSpansBoundary(topEdge, topRow)
+            const bottomPartial = rowSpansBoundary(bottomEdge, bottomRow)
+            let nextY = y
+
+            if (topPartial) {
+                nextY = Math.max(0, topRow.y - inset)
+            } else if (bottomPartial) {
+                nextY = bottomRow.height >= viewH - inset * 2 - 1
+                        ? Math.max(0, bottomRow.y - inset)
+                        : bottomRow.y - viewH + inset
+            } else {
+                break
+            }
+
+            nextY = Math.max(0, Math.min(nextY, maxY))
+            if (Math.abs(nextY - y) <= 0.5) {
+                break
+            }
+            y = nextY
+        }
+
+        if (Math.abs(flickable.contentY - y) > 0.5) {
+            flickable.contentY = y
+        }
+    }
+
+    function scrollByWheelNotches(notches) {
+        const flickable = root.scrollFlickable
+        if (!flickable || notches === 0) {
+            return
+        }
+
+        const lineStep = Math.max(1, Math.round(Math.abs(notches)))
+        const direction = notches > 0 ? -1 : 1
+        let y = flickable.contentY
+
+        for (let i = 0; i < lineStep; ++i) {
+            const row = rowBoundsAtContentY(Math.max(0, y + lineSnapInset + 0.5))
+            y += direction * row.height
+        }
+
+        flickable.contentY = Math.max(0, Math.min(y, contentYMax()))
+        snapScrollToWholeLines()
+    }
+
     function ensureCursorVisible() {
         const flickable = root.scrollFlickable
         if (!flickable) {
             return
         }
 
-        const rect = textArea.cursorRectangle
-        const tp = textArea.topPadding
-        const bp = textArea.bottomPadding
-        const margin = Math.max(6, fontMetrics.height * 0.2)
-        const viewTop = flickable.contentY + tp
-        const viewBottom = flickable.contentY + flickable.height - bp
-        let targetY = flickable.contentY
-
-        if (rect.bottom + margin > viewBottom) {
-            targetY = rect.bottom - flickable.height + bp + margin
-        } else if (rect.top - margin < viewTop) {
-            targetY = rect.top - tp - margin
-        } else {
+        const line = cursorLineBounds()
+        if (line.height <= 0) {
             return
         }
 
-        const maxY = Math.max(0, flickable.contentHeight - flickable.height)
-        flickable.contentY = Math.max(0, Math.min(targetY, maxY))
+        const topMargin = Math.max(lineSnapInset, fontMetrics.ascent * 0.5 + 2)
+        const bottomMargin = Math.max(lineSnapInset, fontMetrics.height * 0.3)
+        const maxY = contentYMax()
+        let targetY = flickable.contentY
+
+        for (let pass = 0; pass < 2; ++pass) {
+            const viewTop = targetY + topMargin
+            const viewBottom = targetY + flickable.height - bottomMargin
+            let changed = false
+
+            if (line.bottom > viewBottom + 0.5) {
+                targetY = line.bottom - flickable.height + bottomMargin
+                changed = true
+            }
+            if (line.top < viewTop - 0.5) {
+                targetY = line.top - topMargin
+                changed = true
+            }
+            if (!changed) {
+                break
+            }
+        }
+
+        targetY = Math.max(0, Math.min(targetY, maxY))
+        if (Math.abs(targetY - flickable.contentY) <= 0.5) {
+            return
+        }
+
+        root.cursorScrollLock = true
+        flickable.contentY = targetY
+        cursorScrollRelease.restart()
     }
 
     function ensureRangeVisible(start, end) {
@@ -145,26 +316,23 @@ Item {
         const startRect = textArea.positionToRectangle(startPos)
         const endRect = textArea.positionToRectangle(endPos > startPos ? endPos - 1 : startPos)
 
-        const tp = textArea.topPadding
-        const bp = textArea.bottomPadding
-        const margin = Math.max(6, fontMetrics.height * 0.2)
-        const viewTop = flickable.contentY + tp
-        const viewBottom = flickable.contentY + flickable.height - bp
+        const inset = lineSnapInset
+        const viewTextTop = flickable.contentY + inset
+        const viewTextBottom = flickable.contentY + flickable.height - inset
 
-        let top = Math.min(startRect.y, endRect.y)
-        let bottom = Math.max(startRect.y + startRect.height, endRect.y + endRect.height)
+        const top = textLeadInset + Math.min(startRect.y, endRect.y)
+        const bottom = textLeadInset + Math.max(startRect.y + startRect.height, endRect.y + endRect.height)
         let targetY = flickable.contentY
 
-        if (bottom + margin > viewBottom) {
-            targetY = bottom - flickable.height + bp + margin
-        } else if (top - margin < viewTop) {
-            targetY = top - tp - margin
+        if (bottom > viewTextBottom) {
+            targetY = bottom - flickable.height + inset
+        } else if (top < viewTextTop) {
+            targetY = top - inset
         } else {
             return
         }
 
-        const maxY = Math.max(0, flickable.contentHeight - flickable.height)
-        flickable.contentY = Math.max(0, Math.min(targetY, maxY))
+        flickable.contentY = Math.max(0, Math.min(targetY, contentYMax()))
     }
 
     function scheduleCurrentLineHighlightUpdate() {
@@ -172,11 +340,6 @@ Item {
     }
 
     function updateCurrentLineHighlight() {
-        if (!textArea.activeFocus) {
-            currentLineHighlight.visible = false
-            return
-        }
-
         const lineStart = lineStartForPosition(textArea.cursorPosition)
         const lineEnd = lineEndForPosition(lineStart)
         const startRect = textArea.positionToRectangle(lineStart)
@@ -191,7 +354,7 @@ Item {
             bottom = Math.max(bottom, endRect.y + endRect.height)
         }
 
-        currentLineHighlight.y = top
+        currentLineHighlight.y = textLeadInset + top
         currentLineHighlight.height = Math.max(bottom - top, fontMetrics.height)
         currentLineHighlight.visible = true
     }
@@ -206,6 +369,20 @@ Item {
         interval: 0
         repeat: false
         onTriggered: root.updateCurrentLineHighlight()
+    }
+
+    Timer {
+        id: cursorVisibleTimer
+        interval: 0
+        repeat: false
+        onTriggered: root.ensureCursorVisible()
+    }
+
+    Timer {
+        id: cursorScrollRelease
+        interval: 120
+        repeat: false
+        onTriggered: root.cursorScrollLock = false
     }
 
     Timer {
@@ -229,34 +406,46 @@ Item {
         color: root.currentLineColor
     }
 
-    Controls.TextArea {
+    TextEdit {
         id: textArea
 
         z: 1
+        y: root.textLeadInset
         width: root.width > 0 ? root.width : implicitWidth
         height: implicitHeight
-        background: null
+        topPadding: 0
+        bottomPadding: 0
 
         onTextChanged: {
             whitespaceRefreshTimer.restart()
-            root.ensureCursorVisible()
             root.scheduleCurrentLineHighlightUpdate()
+            if (activeFocus) {
+                cursorVisibleTimer.restart()
+            }
         }
         onWidthChanged: {
             whitespaceRefreshTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
+            if (activeFocus) {
+                cursorVisibleTimer.restart()
+            }
         }
         onHeightChanged: {
             whitespaceRefreshTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
+            if (activeFocus) {
+                cursorVisibleTimer.restart()
+            }
         }
         onCursorPositionChanged: {
-            root.ensureCursorVisible()
+            cursorVisibleTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
         }
         onCursorRectangleChanged: {
-            root.ensureCursorVisible()
             root.scheduleCurrentLineHighlightUpdate()
+            if (activeFocus) {
+                cursorVisibleTimer.restart()
+            }
         }
         onSelectionStartChanged: root.scheduleCurrentLineHighlightUpdate()
         onSelectionEndChanged: root.scheduleCurrentLineHighlightUpdate()
@@ -284,6 +473,7 @@ Item {
         id: whitespaceCanvas
 
         z: 1
+        y: root.textLeadInset
         width: textArea.width
         height: textArea.height
         visible: root.showWhitespace
@@ -358,9 +548,15 @@ Item {
 
     onSyntaxHighlightingChanged: applySyntaxHighlighting()
 
+    onTextLeadInsetChanged: scheduleCurrentLineHighlightUpdate()
+    onLineSnapInsetChanged: scheduleCurrentLineHighlightUpdate()
+
     Component.onCompleted: {
         attachBracketMatcher()
-        updateCurrentLineHighlight()
+        Qt.callLater(() => {
+            root.resetViewportScroll()
+            root.updateCurrentLineHighlight()
+        })
     }
 
     Connections {

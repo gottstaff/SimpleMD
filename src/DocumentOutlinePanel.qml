@@ -146,8 +146,12 @@ Item {
                     Controls.Label {
                         text: "#".repeat(level)
                         opacity: 0.42
-                        font.family: Kirigami.Theme.fixedFont.family
-                        font.pixelSize: Kirigami.Theme.smallerFont.pixelSize
+                        font.family: Kirigami.Theme.fixedFont
+                            ? Kirigami.Theme.fixedFont.family
+                            : Kirigami.Theme.defaultFont.family
+                        font.pixelSize: Kirigami.Theme.smallerFont
+                            ? Kirigami.Theme.smallerFont.pixelSize
+                            : Kirigami.Theme.defaultFont.pixelSize
                         Layout.alignment: Qt.AlignTop
                     }
 

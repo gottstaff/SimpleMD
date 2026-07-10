@@ -17,7 +17,8 @@ Item {
     property alias editor: editor
 
     readonly property int pad: Kirigami.Units.gridUnit
-    readonly property real editorPad: pad * 1.2
+    readonly property real editorPadH: pad * 1.55
+    readonly property real editorPadV: pad * 2.0
     readonly property real editorOnlyMaxWidth: 720
 
     PreviewHelper {
@@ -70,17 +71,16 @@ Item {
         }
 
         function sourceLineAtScrollTop() {
-            const flickable = editorScroll.contentItem
+            const flickable = editorFlickable
             if (!flickable || editor.text.length === 0) {
                 return sourceLineForCursor()
             }
-            const targetY = flickable.contentY + editorPad
+            const targetY = flickable.contentY + editor.lineSnapInset + 0.5
             let lo = 0
             let hi = editor.text.length
             while (lo < hi) {
                 const mid = Math.floor((lo + hi) / 2)
-                const rect = editor.positionToRectangle(mid)
-                if (rect.y < targetY) {
+                if (editor.contentYForPosition(mid) < targetY) {
                     lo = mid + 1
                 } else {
                     hi = mid
@@ -90,15 +90,15 @@ Item {
         }
 
         function scrollEditorToLine(line, ratio) {
-            const flickable = editorScroll.contentItem
+            const flickable = editorFlickable
             if (!flickable) {
                 return
             }
             root.scrollSyncLock = true
             const pos = charOffsetForLine(line)
-            const rect = editor.positionToRectangle(pos)
+            const lineY = editor.contentYForPosition(pos)
             const maxY = Math.max(0, flickable.contentHeight - flickable.height)
-            let targetY = rect.y - editorPad + ratio * flickable.height * 0.22
+            let targetY = lineY - editor.lineSnapInset + ratio * flickable.height * 0.22
             targetY = Math.max(0, Math.min(targetY, maxY))
             flickable.contentY = targetY
             editorSyncRelease.restart()
@@ -823,28 +823,60 @@ Item {
             Layout.preferredWidth: root.preferences.previewVisible ? root.width / 2 : root.width
             spacing: 0
 
-        Controls.ScrollView {
-            id: editorScroll
+        Item {
+            id: editorViewport
 
             Layout.fillWidth: true
             Layout.fillHeight: true
 
+        Flickable {
+            id: editorFlickable
+
+            x: root.editorPadH
+            y: root.editorPadV
+            width: Math.max(1, editorViewport.width - 2 * root.editorPadH)
+            height: Math.max(1, editorViewport.height - 2 * root.editorPadV)
+
             clip: true
+            boundsBehavior: Flickable.StopAtBounds
+            flickableDirection: Flickable.VerticalFlick
+            contentWidth: width
+            contentHeight: Math.max(height, editor.height)
+
+            Timer {
+                id: editorScrollSnapDebounce
+                interval: 60
+                repeat: false
+                onTriggered: editor.snapScrollToWholeLines()
+            }
+
+            onMovementEnded: {
+                if (editor.textEdit.activeFocus) {
+                    editor.ensureCursorVisible()
+                } else {
+                    editorScrollSnapDebounce.restart()
+                }
+            }
 
             Controls.ScrollBar.vertical: StyledScrollBar {
                 onPositionChanged: {
+                    if (editor.textEdit.activeFocus) {
+                        editor.ensureCursorVisible()
+                    }
                     if (!root.scrollSyncLock && editor.textEdit.activeFocus) {
                         editorScrollSyncDebounce.restart()
                     }
                 }
             }
-            Controls.ScrollBar.horizontal: StyledScrollBar {}
+            Controls.ScrollBar.horizontal: StyledScrollBar {
+                policy: Controls.ScrollBar.AsNeeded
+            }
 
             MarkdownEditor {
                 id: editor
 
-                width: editorScroll.availableWidth
-                scrollFlickable: editorScroll.contentItem
+                width: editorFlickable.width
+                scrollFlickable: editorFlickable
                 editorHelper: root.editorHelper
                 documentController: root.document
                 pasteImageHandler: path => root.insertImage(path)
@@ -853,7 +885,7 @@ Item {
                     if (root.preferences.previewVisible) {
                         return 0
                     }
-                    const innerAvail = editorScroll.availableWidth - 2 * editorPad
+                    const innerAvail = editorFlickable.width
                     const textColumn = Math.min(root.editorOnlyMaxWidth, innerAvail - root.pad * 8)
                     return Math.max(0, (innerAvail - textColumn) / 2)
                 }
@@ -869,10 +901,8 @@ Item {
                 color: Kirigami.Theme.textColor
                 selectionColor: Kirigami.Theme.highlightColor
                 selectedTextColor: Kirigami.Theme.highlightedTextColor
-                leftPadding: editorPad + sidePadding
-                rightPadding: editorPad + sidePadding
-                topPadding: editorPad
-                bottomPadding: editorPad
+                leftPadding: sidePadding
+                rightPadding: sidePadding
 
                 onTextChanged: {
                     if (root.document.text !== text) {
@@ -889,6 +919,10 @@ Item {
                     if (text !== root.document.text) {
                         text = root.document.text
                     }
+                    Qt.callLater(() => {
+                        editor.resetViewportScroll()
+                        editor.updateCurrentLineHighlight()
+                    })
                 }
 
                 Connections {
@@ -896,6 +930,14 @@ Item {
                     function onTextChanged() {
                         if (editor.text !== root.document.text) {
                             editor.text = root.document.text
+                        }
+                    }
+                    function onFilePathChanged() {
+                        if (root.document.filePath.length === 0) {
+                            Qt.callLater(() => {
+                                editor.resetViewportScroll()
+                                editor.updateCurrentLineHighlight()
+                            })
                         }
                     }
                 }
@@ -909,6 +951,8 @@ Item {
                     editorScrollSyncDebounce.restart()
                 }
             }
+        }
+
         }
 
         }
