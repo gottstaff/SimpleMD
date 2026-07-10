@@ -10,6 +10,8 @@ import "editorfonts.js" as EditorFonts
 Item {
     id: root
 
+    clip: true
+
     required property DocumentController document
     required property QtObject preferences
     required property EditorHelper editorHelper
@@ -828,81 +830,180 @@ Item {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-
-        Flickable {
-            id: editorFlickable
-
-            x: root.editorPadH
-            y: root.editorPadV
-            width: Math.max(1, editorViewport.width - 2 * root.editorPadH)
-            height: Math.max(1, editorViewport.height - 2 * root.editorPadV)
-
             clip: true
-            boundsBehavior: Flickable.StopAtBounds
-            flickableDirection: Flickable.VerticalFlick
-            contentWidth: width
-            contentHeight: Math.max(height, editor.height)
 
-            Timer {
-                id: editorScrollSnapDebounce
-                interval: 60
-                repeat: false
-                onTriggered: editor.snapScrollToWholeLines()
-            }
+        RowLayout {
+            id: editorScrollRow
 
-            onMovementEnded: {
-                if (editor.textEdit.activeFocus) {
-                    editor.ensureCursorVisible()
-                } else {
-                    editorScrollSnapDebounce.restart()
+            anchors.fill: parent
+            spacing: 0
+
+            Item {
+                id: editorScrollTrack
+
+                readonly property real barWidth: 5
+                readonly property real minThumbHeight: 32
+                readonly property real maxThumbRatio: 0.22
+
+                Layout.preferredWidth: barWidth
+                Layout.fillHeight: true
+                Layout.topMargin: root.editorPadV
+                Layout.bottomMargin: root.editorPadV
+
+                readonly property real maxScrollY: Math.max(
+                    0, editorFlickable.contentHeight - editorFlickable.height)
+                readonly property real pageRatio: editorFlickable.contentHeight <= 0
+                        ? 1
+                        : Math.min(1, editorFlickable.height / editorFlickable.contentHeight)
+                readonly property real scrollPos: maxScrollY <= 0
+                        ? 0
+                        : Math.min(1, editorFlickable.contentY / maxScrollY)
+                readonly property real thumbHeight: pageRatio >= 1
+                        ? 0
+                        : Math.min(
+                            height * maxThumbRatio,
+                            Math.max(minThumbHeight, height * pageRatio))
+                readonly property real thumbTravel: Math.max(0, height - thumbHeight)
+                readonly property real thumbAlpha: scrollArea.pressed ? 0.72
+                        : (scrollArea.containsMouse ? 0.58 : 0.36)
+
+                visible: pageRatio < 0.999
+
+                Rectangle {
+                    id: editorScrollThumb
+
+                    width: editorScrollTrack.barWidth
+                    height: editorScrollTrack.thumbHeight
+                    radius: width / 2
+                    y: editorScrollTrack.thumbTravel * editorScrollTrack.scrollPos
+                    color: Qt.rgba(
+                        Kirigami.Theme.textColor.r,
+                        Kirigami.Theme.textColor.g,
+                        Kirigami.Theme.textColor.b,
+                        editorScrollTrack.thumbAlpha)
+
+                    Behavior on color {
+                        ColorAnimation {
+                            duration: Kirigami.Units.longDuration
+                            easing.type: Easing.OutCubic
+                        }
+                    }
+                }
+
+                MouseArea {
+                    id: scrollArea
+
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    preventStealing: true
+
+                    property real dragOffset: 0
+
+                    function scrollToMouse(mouseY) {
+                        const travel = editorScrollTrack.thumbTravel
+                        const maxY = editorScrollTrack.maxScrollY
+                        if (maxY <= 0 || travel <= 0) {
+                            return
+                        }
+                        const thumbY = Math.max(0, Math.min(travel, mouseY - editorScrollTrack.thumbHeight / 2))
+                        editorFlickable.contentY = (thumbY / travel) * maxY
+                    }
+
+                    onPressed: mouse => {
+                        if (mouse.y < editorScrollThumb.y
+                                || mouse.y > editorScrollThumb.y + editorScrollThumb.height) {
+                            scrollToMouse(mouse.y)
+                        } else {
+                            dragOffset = mouse.y - editorScrollThumb.y
+                        }
+                    }
+
+                    onPositionChanged: mouse => {
+                        if (!pressed) {
+                            return
+                        }
+                        const travel = editorScrollTrack.thumbTravel
+                        const maxY = editorScrollTrack.maxScrollY
+                        if (travel <= 0 || maxY <= 0) {
+                            return
+                        }
+                        const thumbY = Math.max(0, Math.min(travel, mouse.y - dragOffset))
+                        editorFlickable.contentY = (thumbY / travel) * maxY
+                    }
+
+                    onReleased: {
+                        if (editor.textEdit.activeFocus) {
+                            editor.ensureCursorVisible()
+                        }
+                        if (!root.scrollSyncLock && editor.textEdit.activeFocus) {
+                            editorScrollSyncDebounce.restart()
+                        }
+                    }
+
+                    onClicked: mouse => scrollToMouse(mouse.y)
                 }
             }
 
-            Controls.ScrollBar.vertical: StyledScrollBar {
-                onPositionChanged: {
+            Flickable {
+                id: editorFlickable
+
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                Layout.topMargin: root.editorPadV
+                Layout.bottomMargin: root.editorPadV
+
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
+                flickableDirection: Flickable.VerticalFlick
+                contentWidth: width
+                contentHeight: Math.max(height, editor.documentScrollHeight())
+
+                Timer {
+                    id: editorScrollSnapDebounce
+                    interval: 60
+                    repeat: false
+                    onTriggered: editor.snapScrollToWholeLines()
+                }
+
+                onMovementEnded: {
                     if (editor.textEdit.activeFocus) {
                         editor.ensureCursorVisible()
-                    }
-                    if (!root.scrollSyncLock && editor.textEdit.activeFocus) {
-                        editorScrollSyncDebounce.restart()
+                    } else {
+                        editorScrollSnapDebounce.restart()
                     }
                 }
-            }
-            Controls.ScrollBar.horizontal: StyledScrollBar {
-                policy: Controls.ScrollBar.AsNeeded
-            }
 
-            MarkdownEditor {
-                id: editor
+                MarkdownEditor {
+                    id: editor
 
-                width: editorFlickable.width
-                scrollFlickable: editorFlickable
-                editorHelper: root.editorHelper
-                documentController: root.document
-                pasteImageHandler: path => root.insertImage(path)
+                    width: editorFlickable.width
+                    scrollFlickable: editorFlickable
+                    editorHelper: root.editorHelper
+                    documentController: root.document
+                    pasteImageHandler: path => root.insertImage(path)
 
-                readonly property real sidePadding: {
-                    if (root.preferences.previewVisible) {
-                        return 0
+                    readonly property real sidePadding: {
+                        if (root.preferences.previewVisible) {
+                            return 0
+                        }
+                        const innerAvail = editorFlickable.width - 2 * root.editorPadH
+                        const textColumn = Math.min(root.editorOnlyMaxWidth, innerAvail - root.pad * 8)
+                        return Math.max(0, (innerAvail - textColumn) / 2)
                     }
-                    const innerAvail = editorFlickable.width
-                    const textColumn = Math.min(root.editorOnlyMaxWidth, innerAvail - root.pad * 8)
-                    return Math.max(0, (innerAvail - textColumn) / 2)
-                }
 
-                showWhitespace: root.preferences.showWhitespace
-                syntaxHighlighting: root.preferences.syntaxHighlighting
-                wrapMode: TextEdit.Wrap
-                selectByMouse: true
-                font.family: EditorFonts.resolveFamily(
-                    root.preferences.editorFontFamily,
-                    Kirigami.Theme.fixedFont ? Kirigami.Theme.fixedFont.family : "")
-                font.pixelSize: root.preferences.editorFontSize
-                color: Kirigami.Theme.textColor
-                selectionColor: Kirigami.Theme.highlightColor
-                selectedTextColor: Kirigami.Theme.highlightedTextColor
-                leftPadding: sidePadding
-                rightPadding: sidePadding
+                    showWhitespace: root.preferences.showWhitespace
+                    syntaxHighlighting: root.preferences.syntaxHighlighting
+                    wrapMode: TextEdit.Wrap
+                    selectByMouse: true
+                    font.family: EditorFonts.resolveFamily(
+                        root.preferences.editorFontFamily,
+                        Kirigami.Theme.fixedFont ? Kirigami.Theme.fixedFont.family : "")
+                    font.pixelSize: root.preferences.editorFontSize
+                    color: Kirigami.Theme.textColor
+                    selectionColor: Kirigami.Theme.highlightColor
+                    selectedTextColor: Kirigami.Theme.highlightedTextColor
+                    leftPadding: root.editorPadH + sidePadding
+                    rightPadding: root.editorPadH + sidePadding
 
                 onTextChanged: {
                     if (root.document.text !== text) {
@@ -944,6 +1045,8 @@ Item {
             }
         }
 
+        }
+
         WheelHandler {
             target: editor.textEdit
             onWheel: {
@@ -977,6 +1080,7 @@ Item {
             Layout.fillHeight: true
             Layout.preferredWidth: root.preferences.previewVisible ? root.width / 2 : 0
             spacing: 0
+            clip: true
 
             Rectangle {
                 visible: root.previewShowingLink
@@ -1023,13 +1127,17 @@ Item {
                 }
             }
 
-            WebEngineView {
-                id: previewWeb
-
+            Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
+                clip: true
 
-                url: root.previewDocumentUrl
+                WebEngineView {
+                    id: previewWeb
+
+                    anchors.fill: parent
+
+                    url: root.previewDocumentUrl
                 webChannel: previewChannel
                 backgroundColor: Kirigami.Theme.backgroundColor
                 lifecycleState: root.preferences.previewVisible
@@ -1064,6 +1172,7 @@ Item {
                         console.warn("PDF output failed:", filePath)
                     }
                 }
+            }
             }
         }
 

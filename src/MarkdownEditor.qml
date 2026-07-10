@@ -70,10 +70,31 @@ Item {
                 Kirigami.Theme.textColor.b,
                 0.07))
 
+    readonly property real documentHeight: {
+        const _layoutWidth = textArea.width
+        const tailPad = 4
+        if (textArea.text.length === 0) {
+            return textLeadInset + fontMetrics.height + tailPad
+        }
+
+        const len = textArea.text.length
+        const endRect = textArea.positionToRectangle(len)
+        let bottom = endRect.y + endRect.height
+        if (len > 0) {
+            const lastRect = textArea.positionToRectangle(len - 1)
+            bottom = Math.max(bottom, lastRect.y + lastRect.height)
+        }
+        return textLeadInset + bottom + tailPad
+    }
+
     width: textArea.width
     implicitWidth: textArea.implicitWidth
-    implicitHeight: textLeadInset + textArea.implicitHeight + textTrailInset
-    height: textLeadInset + textArea.height + textTrailInset
+    implicitHeight: documentHeight
+    height: documentHeight
+
+    function documentScrollHeight() {
+        return documentHeight
+    }
 
     function undo() { textArea.undo() }
     function redo() { textArea.redo() }

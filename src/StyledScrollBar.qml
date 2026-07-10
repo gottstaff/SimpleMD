@@ -15,25 +15,19 @@ Controls.ScrollBar {
     interactive: true
 
     implicitWidth: control.orientation === Qt.Vertical
-        ? barThickness + leftPadding + rightPadding
+        ? barThickness
         : control.parent ? control.parent.width : barThickness
     implicitHeight: control.orientation === Qt.Horizontal
-        ? barThickness + topPadding + bottomPadding
+        ? barThickness
         : control.parent ? control.parent.height : barThickness
 
-    leftPadding: control.orientation === Qt.Vertical ? 2 : 0
-    rightPadding: control.orientation === Qt.Vertical ? 2 : 0
-    topPadding: control.orientation === Qt.Horizontal ? 2 : 0
-    bottomPadding: control.orientation === Qt.Horizontal ? 2 : 0
+    leftPadding: 0
+    rightPadding: 0
+    topPadding: 0
+    bottomPadding: 0
 
-    opacity: prominent ? 1.0 : 0.55
-
-    Behavior on opacity {
-        NumberAnimation {
-            duration: Kirigami.Units.longDuration
-            easing.type: Easing.OutCubic
-        }
-    }
+    readonly property real thumbAlpha: control.pressed ? 0.72
+        : (control.prominent ? 0.58 : 0.36)
 
     contentItem: Rectangle {
         implicitWidth: control.orientation === Qt.Vertical ? control.barThickness : parent.width
@@ -43,9 +37,7 @@ Controls.ScrollBar {
             control.thumbBase.r,
             control.thumbBase.g,
             control.thumbBase.b,
-            control.pressed ? 0.72
-                : (control.prominent ? 0.58 : 0.36)
-        )
+            control.thumbAlpha)
 
         Behavior on color {
             ColorAnimation {

@@ -230,6 +230,7 @@ Kirigami.ApplicationWindow {
     }
 
     menuBar: Rectangle {
+        z: 100
         implicitHeight: menuBarRow.implicitHeight + Kirigami.Units.smallSpacing * 2
         color: Qt.tint(Kirigami.Theme.backgroundColor,
                        Qt.rgba(Kirigami.Theme.focusColor.r,
@@ -796,6 +797,7 @@ Kirigami.ApplicationWindow {
         rightPadding: 0
         topPadding: 0
         bottomPadding: 0
+        clip: true
 
         SplitEditor {
             id: editorPane
