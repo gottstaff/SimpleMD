@@ -932,9 +932,6 @@ Item {
                     }
 
                     onReleased: {
-                        if (editor.textEdit.activeFocus) {
-                            editor.ensureCursorVisible()
-                        }
                         if (!root.scrollSyncLock && editor.textEdit.activeFocus) {
                             editorScrollSyncDebounce.restart()
                         }
@@ -965,13 +962,7 @@ Item {
                     onTriggered: editor.snapScrollToWholeLines()
                 }
 
-                onMovementEnded: {
-                    if (editor.textEdit.activeFocus) {
-                        editor.ensureCursorVisible()
-                    } else {
-                        editorScrollSnapDebounce.restart()
-                    }
-                }
+                onMovementEnded: editorScrollSnapDebounce.restart()
 
                 MarkdownEditor {
                     id: editor

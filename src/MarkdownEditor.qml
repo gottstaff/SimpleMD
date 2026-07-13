@@ -447,27 +447,16 @@ Item {
         onWidthChanged: {
             whitespaceRefreshTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
-            if (activeFocus) {
-                cursorVisibleTimer.restart()
-            }
         }
         onHeightChanged: {
             whitespaceRefreshTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
-            if (activeFocus) {
-                cursorVisibleTimer.restart()
-            }
         }
         onCursorPositionChanged: {
             cursorVisibleTimer.restart()
             root.scheduleCurrentLineHighlightUpdate()
         }
-        onCursorRectangleChanged: {
-            root.scheduleCurrentLineHighlightUpdate()
-            if (activeFocus) {
-                cursorVisibleTimer.restart()
-            }
-        }
+        onCursorRectangleChanged: root.scheduleCurrentLineHighlightUpdate()
         onSelectionStartChanged: root.scheduleCurrentLineHighlightUpdate()
         onSelectionEndChanged: root.scheduleCurrentLineHighlightUpdate()
         onActiveFocusChanged: root.scheduleCurrentLineHighlightUpdate()
